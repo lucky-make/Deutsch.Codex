@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEUTSCH CODEX — B2 Grammar System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --surface: #0d1320;
+  --surface2: #111928;
+  --surface3: #18243a;
+  --border: #1e2d45;
+  --border2: #263650;
+  --gold: #e8b84b;
+  --gold-dim: #7a5f1f;
+  --gold-glow: rgba(232,184,75,0.18);
+  --red: #e8455a;
+  --red-dim: #5a1520;
+  --green: #3de8a0;
+  --green-dim: #0d5535;
+  --cyan: #3dbde8;
+  --cyan-dim: #0d3f5a;
+  --purple: #a06ef5;
+  --white: #eef2f8;
+  --text: #b8c4d8;
+  --muted: #556070;
+  --muted2: #2a3545;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.08) 3px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9998;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;animation:bootUp 0.35s ease;}
+@keyframes bootUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* LANDING */
+#s-landing{align-items:center;justify-content:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(232,184,75,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(232,184,75,0.03) 1px,transparent 1px);background-size:60px 60px;animation:gridDrift 40s linear infinite;}
+@keyframes gridDrift{to{transform:translate(60px,60px);}}
+.corner{position:absolute;width:70px;height:70px;border-color:var(--gold);border-style:solid;opacity:0.35;}
+.corner.tl{top:20px;left:20px;border-width:2px 0 0 2px;}
+.corner.tr{top:20px;right:20px;border-width:2px 2px 0 0;}
+.corner.bl{bottom:20px;left:20px;border-width:0 0 2px 2px;}
+.corner.br{bottom:20px;right:20px;border-width:0 2px 2px 0;}
+.stamp{font-family:'Syne',sans-serif;font-size:0.6rem;letter-spacing:8px;color:var(--red);border:1px solid var(--red);padding:5px 18px;margin-bottom:28px;display:inline-block;opacity:0.75;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:0.75;}50%{opacity:0.35;}}
+.land-flag{font-size:56px;margin-bottom:10px;filter:drop-shadow(0 0 24px rgba(232,184,75,0.4));}
+.land-title{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,9vw,6rem);font-weight:800;color:var(--gold);text-shadow:0 0 40px var(--gold-glow),0 0 80px rgba(232,184,75,0.15);letter-spacing:2px;line-height:1;margin-bottom:8px;}
+.land-sub{font-size:0.65rem;color:var(--muted);letter-spacing:5px;text-transform:uppercase;margin-bottom:36px;}
+.land-stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+.stat-box{background:var(--surface2);border:1px solid var(--border2);border-top:2px solid var(--gold-dim);padding:14px 22px;text-align:center;min-width:100px;}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:700;color:var(--gold);}
+.stat-lbl{font-size:0.58rem;color:var(--muted);letter-spacing:3px;margin-top:3px;}
+.btn-p{font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:4px;padding:15px 44px;background:transparent;border:2px solid var(--gold);color:var(--gold);cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;text-transform:uppercase;}
+.btn-p::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:0.25s;z-index:-1;}
+.btn-p:hover{color:var(--bg);box-shadow:0 0 30px var(--gold-glow);}
+.btn-p:hover::before{transform:translateX(0);}
+.land-info{margin-top:44px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;max-width:820px;width:100%;}
+.info-b{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold-dim);padding:14px 16px;text-align:left;}
+.info-b .lbl{font-size:0.6rem;color:var(--gold);letter-spacing:3px;margin-bottom:6px;}
+.info-b .val{font-size:0.75rem;color:var(--text);line-height:1.6;}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border2);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+.t-logo{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.t-lbl{font-size:0.65rem;color:var(--muted);letter-spacing:2px;}
+.t-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.xp-disp{font-family:'Syne',sans-serif;font-size:0.75rem;color:var(--gold);}
+.btn-sm{font-size:0.6rem;padding:6px 11px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;letter-spacing:1px;transition:all 0.2s;font-family:'JetBrains Mono',monospace;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm.cyan{border-color:var(--cyan-dim);color:var(--cyan);}
+.btn-sm.cyan:hover{background:var(--cyan);color:var(--bg);}
+
+/* DAY SELECT */
+#s-days{padding:0;}
+.days-wrap{padding:30px 20px;display:flex;flex-direction:column;align-items:center;}
+.pg-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);letter-spacing:3px;margin-bottom:4px;}
+.pg-sub{font-size:0.65rem;color:var(--muted);letter-spacing:3px;margin-bottom:28px;}
+.days-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px;max-width:920px;width:100%;margin-bottom:24px;}
+.day-card{background:var(--surface2);border:1px solid var(--border);padding:20px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.day-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold-dim);transition:0.3s;}
+.day-card:hover:not(.locked)::after,.day-card.done::after{background:var(--gold);}
+.day-card.done{border-color:var(--green-dim);}
+.day-card.done::after{background:var(--green);}
+.day-card.locked{opacity:0.32;cursor:not-allowed;}
+.day-card:hover:not(.locked){border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.4);}
+.d-num{font-size:0.58rem;letter-spacing:4px;color:var(--gold);font-family:'Syne',sans-serif;margin-bottom:7px;}
+.day-card.done .d-num{color:var(--green);}
+.d-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--white);margin-bottom:3px;}
+.d-sub{font-size:0.68rem;color:var(--muted);margin-bottom:10px;line-height:1.4;}
+.d-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.tag{font-size:0.55rem;padding:2px 7px;border:1px solid var(--border2);color:var(--muted);letter-spacing:1px;}
+.d-meta{display:flex;justify-content:space-between;align-items:center;font-size:0.62rem;color:var(--muted);}
+.d-bar{width:100%;height:2px;background:var(--border);margin-top:10px;}
+.d-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.5s;}
+.day-card.done .d-bar-fill{background:linear-gradient(90deg,var(--green-dim),var(--green));}
+
+/* LESSON */
+#s-lesson{padding:0;}
+.lesson-body{flex:1;padding:30px 20px;max-width:820px;width:100%;align-self:center;}
+.l-head{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border2);}
+.l-day-lbl{font-size:0.62rem;letter-spacing:4px;color:var(--gold);font-family:'Syne',sans-serif;margin-bottom:7px;}
+.l-title{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:var(--white);margin-bottom:3px;}
+.l-sub{font-size:0.72rem;color:var(--muted);letter-spacing:2px;}
+.lesson-content h3{font-family:'Syne',sans-serif;font-size:0.78rem;color:var(--gold);letter-spacing:2px;margin:24px 0 11px;padding-left:12px;border-left:3px solid var(--gold);}
+.lesson-content p{font-size:0.8rem;line-height:1.9;color:var(--text);margin-bottom:13px;}
+.why-box{background:var(--surface3);border:1px solid var(--border2);border-left:3px solid var(--cyan);padding:15px;margin:14px 0;position:relative;}
+.why-box::before{content:'WHY THIS EXISTS';position:absolute;top:-8px;left:12px;font-size:0.52rem;letter-spacing:2px;color:var(--cyan);background:var(--surface3);padding:0 6px;}
+.why-box p{font-size:0.76rem;color:var(--cyan);margin:0;font-style:italic;}
+.trig-list{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0;}
+.tw{background:var(--surface3);border:1px solid var(--gold-dim);color:var(--gold);padding:6px 13px;font-size:0.8rem;font-family:'Syne',sans-serif;letter-spacing:1px;cursor:pointer;transition:all 0.15s;}
+.tw:hover{box-shadow:0 0 12px var(--gold-glow);}
+.tw.dat{border-color:var(--cyan-dim);color:var(--cyan);}
+.tw.dat:hover{box-shadow:0 0 12px rgba(61,189,232,0.2);}
+.tw.vb{border-color:var(--green-dim);color:var(--green);}
+.tw.vb:hover{box-shadow:0 0 12px rgba(61,232,160,0.15);}
+.tw.conn{border-color:var(--red-dim);color:var(--red);}
+.gtable{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.76rem;}
+.gtable th{background:var(--surface3);border:1px solid var(--border2);padding:9px 13px;text-align:center;color:var(--gold);font-family:'Syne',sans-serif;font-size:0.62rem;letter-spacing:1px;}
+.gtable td{border:1px solid var(--border);padding:9px 13px;text-align:center;color:var(--text);transition:background 0.2s;}
+.gtable tr:hover td{background:var(--surface3);}
+.gtable td.hl{color:var(--gold);font-weight:600;}
+.gtable td.ch{color:var(--red);}
+.gtable td.rl{text-align:left;color:var(--cyan);font-size:0.68rem;letter-spacing:1px;background:var(--surface2);}
+.l-bottom{padding:20px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;max-width:820px;width:100%;align-self:center;}
+.l-bottom-info{font-size:0.65rem;color:var(--muted);letter-spacing:2px;}
+
+/* DRILL */
+#s-drill{flex-direction:column;padding:0;}
+.drill-tbar{background:var(--surface);border-bottom:1px solid var(--border2);padding:11px 20px;display:flex;align-items:center;gap:14px;}
+.d-prog-track{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.d-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.4s;}
+.d-counter{font-family:'Syne',sans-serif;font-size:0.68rem;color:var(--gold);white-space:nowrap;}
+.hearts{font-size:0.85rem;white-space:nowrap;}
+.drill-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px 20px;max-width:720px;width:100%;align-self:center;}
+.d-card{width:100%;background:var(--surface2);border:1px solid var(--border2);border-top:3px solid var(--gold);padding:28px;margin-bottom:20px;animation:cardIn 0.25s ease;}
+@keyframes cardIn{from{opacity:0;transform:scale(0.98);}to{opacity:1;transform:scale(1);}}
+.d-type{font-size:0.58rem;letter-spacing:3px;color:var(--muted);margin-bottom:14px;}
+.d-q{font-size:0.98rem;color:var(--white);line-height:1.7;margin-bottom:6px;}
+.d-opts{display:flex;flex-direction:column;gap:9px;}
+.opt{width:100%;text-align:left;padding:13px 17px;background:var(--surface);border:1px solid var(--border2);color:var(--text);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.83rem;transition:all 0.15s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(.dis){border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+.opt.ok{border-color:var(--green);color:var(--green);background:rgba(61,232,160,0.07);pointer-events:none;}
+.opt.bad{border-color:var(--red);color:var(--red);background:rgba(232,69,90,0.07);pointer-events:none;}
+.opt.show-ok{border-color:var(--green);color:var(--green);pointer-events:none;}
+.opt.dis{pointer-events:none;opacity:0.45;}
+.opt-k{font-family:'Syne',sans-serif;font-size:0.6rem;color:var(--muted);border:1px solid var(--border2);padding:2px 6px;min-width:22px;text-align:center;}
+.fb-box{width:100%;padding:15px 19px;margin-bottom:14px;border-left:4px solid;display:none;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.fb-box.ok-fb{border-color:var(--green);background:rgba(61,232,160,0.05);}
+.fb-box.bad-fb{border-color:var(--red);background:rgba(232,69,90,0.05);}
+.fb-title{font-family:'Syne',sans-serif;font-size:0.68rem;margin-bottom:5px;}
+.fb-box.ok-fb .fb-title{color:var(--green);}
+.fb-box.bad-fb .fb-title{color:var(--red);}
+.fb-exp{font-size:0.76rem;color:var(--text);line-height:1.7;}
+.btn-cont{font-family:'Syne',sans-serif;font-size:0.78rem;letter-spacing:2px;padding:13px 38px;background:transparent;border:2px solid var(--gold);color:var(--gold);cursor:pointer;transition:all 0.2s;display:none;}
+.btn-cont:hover{background:var(--gold);color:var(--bg);box-shadow:0 0 20px var(--gold-glow);}
+
+/* DISSECTION MODE */
+#s-dissect{flex-direction:column;padding:0;}
+.dissect-body{flex:1;padding:28px 20px;max-width:820px;width:100%;align-self:center;}
+.dissect-intro{background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--purple);padding:18px;margin-bottom:24px;}
+.dissect-intro h3{font-family:'Syne',sans-serif;font-size:0.75rem;color:var(--purple);letter-spacing:2px;margin-bottom:8px;}
+.dissect-intro p{font-size:0.76rem;color:var(--muted);line-height:1.7;margin:0;}
+.sent-display{background:var(--surface3);border:1px solid var(--border2);padding:24px;margin-bottom:20px;text-align:center;position:relative;}
+.sent-display .sent-text{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--white);letter-spacing:1px;margin-bottom:8px;}
+.sent-display .sent-en{font-size:0.78rem;color:var(--muted);font-style:italic;}
+.sent-display .audio-btn{position:absolute;top:14px;right:14px;}
+.word-tokens{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;justify-content:center;}
+.token{background:var(--surface2);border:2px solid var(--border2);padding:10px 16px;cursor:pointer;transition:all 0.2s;position:relative;font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--white);}
+.token:hover{border-color:var(--purple);color:var(--purple);}
+.token.selected{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+.token.labeled{border-color:var(--green);color:var(--green);}
+.token.labeled .tok-badge{display:flex;}
+.tok-badge{display:none;position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:0.52rem;letter-spacing:1px;background:var(--green);color:var(--bg);padding:2px 6px;white-space:nowrap;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.label-panel{background:var(--surface2);border:1px solid var(--border2);padding:18px;margin-bottom:20px;display:none;}
+.label-panel.open{display:block;animation:fadeIn 0.2s ease;}
+.lp-title{font-size:0.62rem;letter-spacing:3px;color:var(--gold);margin-bottom:14px;font-family:'Syne',sans-serif;}
+.lp-word{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.label-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:14px;}
+.lcat{background:var(--surface);border:1px solid var(--border2);padding:9px 13px;cursor:pointer;font-size:0.73rem;color:var(--text);transition:all 0.2s;display:flex;flex-direction:column;gap:3px;}
+.lcat:hover{border-color:var(--purple);color:var(--purple);}
+.lcat.picked{border-color:var(--green);color:var(--green);background:rgba(61,232,160,0.06);}
+.lcat .cat-name{font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:700;}
+.lcat .cat-desc{font-size:0.6rem;color:var(--muted);}
+.why-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-bottom:2px solid var(--gold-dim);color:var(--white);font-family:'JetBrains Mono',monospace;font-size:0.83rem;padding:12px 14px;outline:none;transition:border-color 0.2s;margin-bottom:10px;}
+.why-input:focus{border-bottom-color:var(--gold);}
+.btn-label{font-family:'Syne',sans-serif;font-size:0.7rem;letter-spacing:2px;padding:10px 22px;background:transparent;border:1px solid var(--gold);color:var(--gold);cursor:pointer;transition:all 0.2s;}
+.btn-label:hover{background:var(--gold);color:var(--bg);}
+.dissect-analysis{background:var(--surface2);border:1px solid var(--border2);padding:18px;margin-bottom:20px;}
+.da-title{font-size:0.62rem;letter-spacing:3px;color:var(--muted);margin-bottom:14px;font-family:'Syne',sans-serif;}
+.da-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.da-row:last-child{border-bottom:none;}
+.da-word{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--gold);min-width:120px;}
+.da-badge{font-size:0.6rem;padding:2px 8px;border:1px solid;letter-spacing:1px;white-space:nowrap;}
+.da-badge.nom{border-color:var(--cyan);color:var(--cyan);}
+.da-badge.acc{border-color:var(--gold);color:var(--gold);}
+.da-badge.dat{border-color:var(--green);color:var(--green);}
+.da-badge.gen{border-color:var(--purple);color:var(--purple);}
+.da-badge.verb{border-color:var(--red);color:var(--red);}
+.da-badge.other{border-color:var(--muted);color:var(--muted);}
+.da-why{font-size:0.72rem;color:var(--text);flex:1;min-width:160px;line-height:1.6;}
+.da-why .user-why{color:var(--white);font-style:italic;}
+.da-why .correct-why{color:var(--muted);margin-top:3px;}
+.check-dissect-btn{font-family:'Syne',sans-serif;font-size:0.75rem;letter-spacing:2px;padding:12px 28px;background:transparent;border:2px solid var(--gold);color:var(--gold);cursor:pointer;transition:all 0.2s;display:none;margin-bottom:16px;}
+.check-dissect-btn:hover{background:var(--gold);color:var(--bg);}
+.check-dissect-btn.show{display:block;}
+.dissect-result{padding:16px;margin-bottom:16px;border-left:4px solid;display:none;}
+.dissect-result.show{display:block;animation:fadeIn 0.3s ease;}
+.dissect-result.pass{border-color:var(--green);background:rgba(61,232,160,0.05);}
+.dissect-result.fail{border-color:var(--red);background:rgba(232,69,90,0.05);}
+.dissect-nav{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* RESULT */
+#s-result{align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+.res-badge{font-size:0.62rem;letter-spacing:5px;color:var(--gold);margin-bottom:14px;font-family:'Syne',sans-serif;}
+.res-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,5vw,3rem);font-weight:800;color:var(--white);margin-bottom:6px;}
+.res-score{font-family:'Syne',sans-serif;font-size:5rem;font-weight:800;color:var(--gold);text-shadow:0 0 30px var(--gold-glow);margin:8px 0;line-height:1;}
+.res-stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:18px 0;}
+.res-stat{background:var(--surface2);border:1px solid var(--border2);padding:13px 18px;min-width:95px;}
+.rs-num{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;}
+.rs-num.g{color:var(--green);}
+.rs-num.r{color:var(--red);}
+.rs-num.a{color:var(--gold);}
+.rs-lbl{font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-top:3px;}
+.mistakes-wrap{max-width:620px;width:100%;margin:16px auto;text-align:left;}
+.mis-title{font-size:0.62rem;letter-spacing:3px;color:var(--red);margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--red-dim);}
+.mis-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--red-dim);padding:11px 15px;margin-bottom:7px;font-size:0.76rem;line-height:1.6;}
+.mis-q{color:var(--muted);margin-bottom:3px;font-size:0.7rem;}
+.mis-ans{color:var(--green);}
+.mis-exp{color:var(--text);font-size:0.68rem;margin-top:3px;font-style:italic;}
+.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+.btn-s{font-family:'Syne',sans-serif;font-size:0.72rem;letter-spacing:2px;padding:11px 26px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.btn-s:hover{border-color:var(--gold);color:var(--gold);}
+
+/* FORGE */
+#s-forge{flex-direction:column;align-items:center;padding:0;}
+.forge-body{flex:1;padding:28px 20px;max-width:720px;width:100%;}
+.forge-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);margin-bottom:5px;}
+.forge-desc{font-size:0.75rem;color:var(--muted);line-height:1.7;margin-bottom:22px;}
+.forge-prompt{background:var(--surface2);border:1px solid var(--border2);border-top:3px solid var(--gold);padding:22px;margin-bottom:18px;}
+.fp-word{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:4px;}
+.fp-en{font-size:0.78rem;color:var(--muted);margin-bottom:14px;}
+.fp-checks{background:var(--surface3);border:1px solid var(--border);padding:14px;}
+.fp-checks-title{font-size:0.6rem;letter-spacing:2px;color:var(--cyan);margin-bottom:9px;}
+.fp-check{font-size:0.72rem;color:var(--muted);padding:3px 0;display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
+.fp-check::before{content:'▸';color:var(--gold-dim);flex-shrink:0;}
+.forge-ta{width:100%;background:var(--surface);border:1px solid var(--border2);border-bottom:3px solid var(--gold-dim);color:var(--white);font-family:'JetBrains Mono',monospace;font-size:0.95rem;padding:14px;resize:vertical;min-height:75px;margin-bottom:14px;outline:none;transition:border-color 0.2s;}
+.forge-ta:focus{border-bottom-color:var(--gold);box-shadow:0 0 15px var(--gold-glow);}
+.forge-sa{display:none;margin-bottom:18px;}
+.sa-title{font-size:0.68rem;letter-spacing:2px;color:var(--muted);margin-bottom:11px;}
+.sa-btns{display:flex;gap:9px;flex-wrap:wrap;}
+.sa-btn{flex:1;min-width:110px;padding:11px 14px;background:transparent;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:all 0.2s;text-align:center;border:1px solid;}
+.sa-btn.perfect{border-color:var(--green);color:var(--green);}
+.sa-btn.partial{border-color:var(--gold);color:var(--gold);}
+.sa-btn.wrong-a{border-color:var(--red);color:var(--red);}
+.sa-btn:hover.perfect{background:rgba(61,232,160,0.1);}
+.sa-btn:hover.partial{background:var(--gold-glow);}
+.sa-btn:hover.wrong-a{background:rgba(232,69,90,0.1);}
+.forge-log{margin-top:28px;}
+.fl-title{font-size:0.62rem;letter-spacing:3px;color:var(--muted);margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.log-entry{background:var(--surface2);border:1px solid var(--border);border-left:3px solid;padding:11px 15px;margin-bottom:7px;animation:fadeIn 0.3s ease;}
+.log-entry.perfect-l{border-left-color:var(--green);}
+.log-entry.partial-l{border-left-color:var(--gold);}
+.log-entry.wrong-l{border-left-color:var(--red);}
+.le-sent{font-size:0.83rem;color:var(--white);margin-bottom:3px;}
+.le-word{font-size:0.6rem;color:var(--muted);letter-spacing:1px;}
+
+/* REF PANEL */
+.ref-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:flex-end;}
+.ref-overlay.open{display:flex;}
+.ref-panel{background:var(--surface);border-top:2px solid var(--cyan);width:100%;max-height:82vh;overflow-y:auto;padding:22px 20px;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.ref-title{font-family:'Syne',sans-serif;font-size:0.9rem;color:var(--cyan);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+.ref-section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border);}
+.ref-section:last-child{border:none;margin:0;padding:0;}
+.ref-s-title{font-size:0.62rem;letter-spacing:2px;color:var(--gold);margin-bottom:11px;font-family:'Syne',sans-serif;}
+.algo-step{display:flex;gap:13px;margin-bottom:10px;padding:11px;background:var(--surface2);border:1px solid var(--border);}
+.algo-num{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--gold);min-width:22px;}
+.algo-text{font-size:0.76rem;color:var(--text);line-height:1.7;}
+.algo-text strong{color:var(--gold);}
+
+/* AUDIO BUTTON */
+.aud{background:none;border:1px solid var(--muted2);color:var(--muted);padding:2px 7px;cursor:pointer;font-size:0.75rem;transition:all 0.15s;font-family:'JetBrains Mono',monospace;vertical-align:middle;margin-left:5px;}
+.aud:hover{border-color:var(--gold);color:var(--gold);}
+.aud.playing{border-color:var(--green);color:var(--green);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:18px;background:var(--surface);border:1px solid var(--gold);border-left:4px solid var(--gold);padding:13px 18px;max-width:280px;z-index:1000;animation:toastIn 0.35s ease,toastOut 0.35s ease 3.65s forwards;box-shadow:0 0 20px var(--gold-glow);}
+@keyframes toastIn{from{opacity:0;transform:translateX(100%);}to{opacity:1;transform:translateX(0);}}
+@keyframes toastOut{from{opacity:1;}to{opacity:0;}}
+.t-title{font-family:'Syne',sans-serif;font-size:0.72rem;color:var(--gold);margin-bottom:3px;}
+.t-body{font-size:0.7rem;color:var(--muted);}
+
+/* WORD ORDER VISUAL */
+.wo-vis{display:flex;gap:4px;margin:14px 0;flex-wrap:wrap;padding-top:28px;}
+.wb{padding:8px 11px;background:var(--surface3);border:1px solid var(--border2);font-size:0.78rem;position:relative;}
+.wb .pos{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:0.52rem;color:var(--muted);white-space:nowrap;letter-spacing:1px;}
+.wb.vp{border-color:var(--gold);color:var(--gold);}
+.wb.ve{border-color:var(--red);color:var(--red);}
+
+@media(max-width:580px){
+  .land-title{font-size:2.8rem;}
+  .d-card{padding:18px;}
+  .ref-panel{padding:18px 14px;}
+  .dissect-body,.lesson-body,.forge-body{padding:18px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- REFERENCE PANEL -->
+<div class="ref-overlay" id="ref-overlay" onclick="closeRef(event)">
+  <div class="ref-panel">
+    <div class="ref-title">
+      <span>⬡ COMPLETE ALGORITHM — B2 REFERENCE</span>
+      <button class="btn-sm" onclick="document.getElementById('ref-overlay').classList.remove('open')">CLOSE ✕</button>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► SENTENCE DECONSTRUCTION ALGORITHM</div>
+      <div class="algo-step"><div class="algo-num">1</div><div class="algo-text"><strong>Find the conjugated verb.</strong> Position 2 (main clause) · Position 1 (question/command) · END (after: weil, dass, wenn, obwohl, als, bevor, nachdem, damit, ob, falls, während, seitdem)</div></div>
+      <div class="algo-step"><div class="algo-num">2</div><div class="algo-text"><strong>Who does the verb? → NOMINATIVE</strong> (der / die / das / die) — the Doer</div></div>
+      <div class="algo-step"><div class="algo-num">3</div><div class="algo-text"><strong>What is directly verbed? → ACCUSATIVE</strong> — the Receiver. Masculine only changes: der→den, ein→einen</div></div>
+      <div class="algo-step"><div class="algo-num">4</div><div class="algo-text"><strong>Is there a to/for recipient, dative preposition, or dative verb? → DATIVE</strong> — the Target. Use dem/der/dem/den+n</div></div>
+      <div class="algo-step"><div class="algo-num">5</div><div class="algo-text"><strong>Is there possession or a genitive preposition? → GENITIVE</strong> — the Owner. des+s/der/des+s/der. Preps: wegen, trotz, während, (an)statt</div></div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► MASTER ARTICLE TABLE</div>
+      <table class="gtable">
+        <tr><th>CASE</th><th>MASC (der)</th><th>FEM (die)</th><th>NEUT (das)</th><th>PLURAL (die)</th></tr>
+        <tr><td class="rl">NOMINATIVE</td><td>der / ein</td><td>die / eine</td><td>das / ein</td><td>die / –</td></tr>
+        <tr><td class="rl">ACCUSATIVE</td><td class="ch">den / einen</td><td>die / eine</td><td>das / ein</td><td>die / –</td></tr>
+        <tr><td class="rl">DATIVE</td><td>dem / einem</td><td class="ch">der / einer</td><td>dem / einem</td><td class="ch">den+n / –</td></tr>
+        <tr><td class="rl">GENITIVE</td><td>des / eines (+s)</td><td>der / einer</td><td>des / eines (+s)</td><td>der / –</td></tr>
+      </table>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► PRONOUN CHANT (Nom → Acc → Dat)</div>
+      <table class="gtable">
+        <tr><th>PERSON</th><th>DOER</th><th>RECEIVER</th><th>TARGET</th></tr>
+        <tr><td class="rl">I</td><td>ich</td><td class="ch">mich</td><td class="hl">mir</td></tr>
+        <tr><td class="rl">you (inf.)</td><td>du</td><td class="ch">dich</td><td class="hl">dir</td></tr>
+        <tr><td class="rl">he</td><td>er</td><td class="ch">ihn</td><td class="hl">ihm</td></tr>
+        <tr><td class="rl">she</td><td>sie</td><td>sie</td><td class="hl">ihr</td></tr>
+        <tr><td class="rl">we</td><td>wir</td><td>uns</td><td class="hl">uns</td></tr>
+        <tr><td class="rl">you (pl.)</td><td>ihr</td><td>euch</td><td class="hl">euch</td></tr>
+        <tr><td class="rl">they/Sie</td><td>sie/Sie</td><td>sie/Sie</td><td class="hl">ihnen/Ihnen</td></tr>
+      </table>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► DATIVE TRIGGER PREPOSITIONS</div>
+      <div class="trig-list">
+        <span class="tw dat">mit</span><span class="tw dat">nach</span><span class="tw dat">bei</span><span class="tw dat">von</span><span class="tw dat">seit</span><span class="tw dat">zu</span><span class="tw dat">aus</span><span class="tw dat">außer</span><span class="tw dat">gegenüber</span>
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► DATIVE TRIGGER VERBS</div>
+      <div class="trig-list">
+        <span class="tw vb">helfen</span><span class="tw vb">danken</span><span class="tw vb">gehören</span><span class="tw vb">gefallen</span><span class="tw vb">schmecken</span><span class="tw vb">passen</span><span class="tw vb">antworten</span><span class="tw vb">glauben</span><span class="tw vb">vertrauen</span>
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► VERB-FINAL CONNECTORS</div>
+      <div class="trig-list">
+        <span class="tw conn">weil</span><span class="tw conn">dass</span><span class="tw conn">wenn</span><span class="tw conn">obwohl</span><span class="tw conn">als</span><span class="tw conn">bevor</span><span class="tw conn">nachdem</span><span class="tw conn">damit</span><span class="tw conn">ob</span><span class="tw conn">falls</span><span class="tw conn">während</span><span class="tw conn">seitdem</span><span class="tw conn">sobald</span>
+      </div>
+      <p style="font-size:0.68rem;color:var(--muted);margin-top:8px;">Normal order kept after: und · aber · oder · denn · sondern</p>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► KONJUNKTIV II CORE FORMS</div>
+      <div class="trig-list">
+        <span class="tw">wäre (would be — sein)</span>
+        <span class="tw">hätte (would have — haben)</span>
+        <span class="tw">würde + inf. (everything else)</span>
+        <span class="tw">könntest (could — polite)</span>
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-s-title">► PERFEKT RULE</div>
+      <p style="font-size:0.76rem;color:var(--text);line-height:1.7;margin:0"><strong style="color:var(--gold)">haben</strong> → most verbs &nbsp;·&nbsp; <strong style="color:var(--green)">sein</strong> → movement A→B + state change<br>be-/ver-/er-/ent-/emp- prefixes → NO ge- in participle<br>Separable verbs → ge- between prefix and stem (auf<strong>ge</strong>standen)</p>
+    </div>
+  </div>
+</div>
+
+<!-- LANDING -->
+<div id="s-landing" class="screen active">
+  <div class="grid-bg"></div>
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+  <div class="stamp">CLASSIFIED — GRAMMAR INTELLIGENCE</div>
+  <div class="land-flag">🇩🇪</div>
+  <div class="land-title">DEUTSCH<br>CODEX</div>
+  <div class="land-sub">Complete B2 Grammar Skeleton — 7 Days · With Sentence Dissection</div>
+  <div class="land-stats">
+    <div class="stat-box"><div class="stat-num">7</div><div class="stat-lbl">DAYS</div></div>
+    <div class="stat-box"><div class="stat-num">140</div><div class="stat-lbl">DRILLS</div></div>
+    <div class="stat-box"><div class="stat-num">42</div><div class="stat-lbl">DISSECTIONS</div></div>
+    <div class="stat-box"><div class="stat-num" id="l-xp">0</div><div class="stat-lbl">XP EARNED</div></div>
+  </div>
+  <button class="btn-p" onclick="goToDays()">ENTER CODEX →</button>
+  <div class="land-info" style="margin-top:40px;">
+    <div class="info-b"><div class="lbl">SKELETON FIRST</div><div class="val">7 days. All four cases, word order's 3 laws, pronouns, modals, Perfekt, Konjunktiv II, passive, the full dissection algorithm.</div></div>
+    <div class="info-b"><div class="lbl">DISSECTION MODE</div><div class="val">Real sentences. Label every word — case, role, why. No multiple choice. This is where the skeleton either holds or breaks.</div></div>
+    <div class="info-b"><div class="lbl">AUDIO EVERYWHERE</div><div class="val">Every German word and sentence has a 🔊 button. Tap to hear pronunciation. Uses your device's German TTS engine.</div></div>
+    <div class="info-b"><div class="lbl">WHAT THIS IS NOT</div><div class="val">Vocabulary. Speaking practice. Listening immersion. Those come after — via your CI roadmap. This is the blueprint.</div></div>
+  </div>
+</div>
+
+<!-- DAYS -->
+<div id="s-days" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="t-logo">DEUTSCH CODEX</div>
+    </div>
+    <div class="t-right">
+      <div class="xp-disp">⬡ <span id="tb-xp">0</span> XP</div>
+      <div style="font-size:0.72rem;color:var(--green)">🔥 <span id="tb-streak">0</span></div>
+      <button class="btn-sm cyan" onclick="openRef()">ALGORITHM ⊕</button>
+    </div>
+  </div>
+  <div class="days-wrap">
+    <div class="pg-title">MISSION SELECT</div>
+    <div class="pg-sub">COMPLETE DRILLS → UNLOCK DISSECTION → NEXT DAY</div>
+    <div class="days-grid" id="days-grid"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-p" style="font-size:0.7rem;padding:11px 28px;" onclick="showForge()">⬡ SENTENCE FORGE →</button>
+      <button class="btn-s" onclick="resetAll()">↺ RESET</button>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON -->
+<div id="s-lesson" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn-sm" onclick="goToDays()">← DAYS</button>
+      <div class="t-lbl" id="l-tb-lbl">DAY 1</div>
+    </div>
+    <div class="t-right">
+      <div class="xp-disp">⬡ <span id="l-tb-xp">0</span> XP</div>
+      <button class="btn-sm cyan" onclick="openRef()">ALGORITHM ⊕</button>
+    </div>
+  </div>
+  <div class="lesson-body">
+    <div class="l-head">
+      <div class="l-day-lbl" id="l-day-lbl">DAY 1 — BRIEFING</div>
+      <div class="l-title" id="l-title">The Four Cases</div>
+      <div class="l-sub" id="l-sub">Cases · Articles · Triggers</div>
+    </div>
+    <div class="lesson-content" id="l-content"></div>
+  </div>
+  <div class="l-bottom">
+    <div class="l-bottom-info">20 DRILLS THEN DISSECTION MODE</div>
+    <button class="btn-p" onclick="startDrills()">START DRILLS →</button>
+  </div>
+</div>
+
+<!-- DRILL -->
+<div id="s-drill" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn-sm" onclick="confirmBack()">← DAYS</button>
+      <div class="t-lbl" id="d-day-lbl">DAY 1</div>
+    </div>
+    <div class="t-right">
+      <div class="hearts" id="hearts">❤️❤️❤️❤️❤️</div>
+      <div class="xp-disp">⬡ <span id="d-xp">0</span></div>
+      <button class="btn-sm cyan" onclick="openRef()">REF ⊕</button>
+    </div>
+  </div>
+  <div class="drill-tbar">
+    <div class="d-counter" id="d-counter">1 / 20</div>
+    <div class="d-prog-track"><div class="d-prog-fill" id="d-prog" style="width:0%"></div></div>
+  </div>
+  <div class="drill-body">
+    <div class="d-card" id="d-card"></div>
+    <div class="fb-box" id="fb-box"></div>
+    <button class="btn-cont" id="btn-cont" onclick="nextDrill()">CONTINUE →</button>
+  </div>
+</div>
+
+<!-- DISSECTION -->
+<div id="s-dissect" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn-sm" onclick="goToDays()">← DAYS</button>
+      <div class="t-lbl" id="dis-lbl">DISSECTION — DAY 1</div>
+    </div>
+    <div class="t-right">
+      <div class="xp-disp">⬡ <span id="dis-xp">0</span> XP</div>
+      <button class="btn-sm cyan" onclick="openRef()">ALGORITHM ⊕</button>
+    </div>
+  </div>
+  <div class="dissect-body">
+    <div class="dissect-intro">
+      <h3>⬡ SENTENCE DISSECTION MODE</h3>
+      <p>A real German sentence appears. Click each word to label it: what case, what role, and WHY. No multiple choice. You must construct the full analysis. This is where the skeleton either holds or breaks.</p>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-size:0.65rem;color:var(--muted);letter-spacing:2px;">SENTENCE <span id="dis-idx">1</span> OF <span id="dis-total">6</span></div>
+      <div style="font-size:0.65rem;color:var(--gold);letter-spacing:2px;">SCORE: <span id="dis-score">0</span> / <span id="dis-score-total">0</span></div>
+    </div>
+    <div class="sent-display">
+      <div class="sent-text" id="dis-sentence"></div>
+      <div class="sent-en" id="dis-en"></div>
+      <button class="aud audio-btn" id="dis-audio-btn" onclick="speakDis()">🔊</button>
+    </div>
+    <div class="word-tokens" id="word-tokens"></div>
+    <div class="label-panel" id="label-panel">
+      <div class="lp-title">LABEL THIS WORD</div>
+      <div class="lp-word" id="lp-word"></div>
+      <div class="label-cats" id="label-cats"></div>
+      <input class="why-input" id="why-input" placeholder="WHY? Write your reasoning (e.g. 'wegen forces genitive')..." />
+      <button class="btn-label" onclick="confirmLabel()">CONFIRM LABEL →</button>
+    </div>
+    <div class="dissect-analysis" id="dissect-analysis" style="display:none;">
+      <div class="da-title">YOUR ANALYSIS</div>
+      <div id="da-rows"></div>
+    </div>
+    <button class="check-dissect-btn" id="check-dis-btn" onclick="checkDissection()">CHECK MY ANALYSIS →</button>
+    <div class="dissect-result" id="dis-result"></div>
+    <div class="dissect-nav" id="dis-nav" style="display:none;">
+      <button class="btn-p" style="font-size:0.72rem;padding:11px 24px;" id="dis-next-btn" onclick="nextDissection()">NEXT SENTENCE →</button>
+      <button class="btn-s" onclick="goToDays()">BACK TO MAP</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="t-logo">DEUTSCH CODEX</div>
+    </div>
+    <div class="t-right">
+      <div class="xp-disp">⬡ <span id="r-xp-total">0</span> XP</div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;">
+    <div class="res-badge">MISSION DEBRIEF</div>
+    <div class="res-title" id="r-title">DAY COMPLETE</div>
+    <div class="res-score" id="r-score">100%</div>
+    <div class="res-stats">
+      <div class="res-stat"><div class="rs-num g" id="r-correct">0</div><div class="rs-lbl">CORRECT</div></div>
+      <div class="res-stat"><div class="rs-num r" id="r-wrong">0</div><div class="rs-lbl">WRONG</div></div>
+      <div class="res-stat"><div class="rs-num a" id="r-xp">0</div><div class="rs-lbl">XP GAINED</div></div>
+    </div>
+    <div class="mistakes-wrap" id="mis-wrap"></div>
+    <div class="res-btns">
+      <button class="btn-p" id="r-next-btn" onclick="goToDissect()">DISSECTION MODE →</button>
+      <button class="btn-s" onclick="retryDay()">↺ RETRY DRILLS</button>
+      <button class="btn-s" onclick="showForge()">⬡ SENTENCE FORGE</button>
+      <button class="btn-s" onclick="goToDays()">MAP</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORGE -->
+<div id="s-forge" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn-sm" onclick="goToDays()">← DAYS</button>
+      <div class="t-logo">SENTENCE FORGE</div>
+    </div>
+    <div class="t-right">
+      <button class="btn-sm cyan" onclick="openRef()">ALGORITHM ⊕</button>
+    </div>
+  </div>
+  <div class="forge-body">
+    <div class="forge-title">⬡ SENTENCE FORGE</div>
+    <div class="forge-desc">Take the word. Apply the algorithm. Write a German sentence from scratch — no template, no scaffold. Grammar skeleton meets vocabulary under pressure. 5 sentences per session.</div>
+    <div class="forge-prompt" id="forge-prompt">
+      <div class="fp-word" id="fp-word">—</div>
+      <div class="fp-en" id="fp-en">Loading...</div>
+      <div class="fp-checks">
+        <div class="fp-checks-title">SELF-CHECK BEFORE WRITING</div>
+        <div class="fp-check">Who is the subject? → Nominative article (der/die/das)</div>
+        <div class="fp-check">Is there a direct object? → Accusative (masculine: den/einen)</div>
+        <div class="fp-check">Is there a dative trigger preposition or verb? → dem/der/dem</div>
+        <div class="fp-check">Where is the verb? → Position 2 in main clause</div>
+        <div class="fp-check">Any connectors (weil/dass/wenn)? → Verb to END</div>
+      </div>
+    </div>
+    <textarea class="forge-ta" id="forge-ta" placeholder="Write your German sentence here..." rows="3"></textarea>
+    <div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn-p" style="font-size:0.72rem;padding:11px 22px;" onclick="showAssess()">ASSESS →</button>
+      <button class="btn-s" onclick="newForgeWord()">NEW WORD ↺</button>
+    </div>
+    <div class="forge-sa" id="forge-sa">
+      <div class="sa-title">HOW DID YOU DO?</div>
+      <div class="sa-btns">
+        <button class="sa-btn perfect" onclick="logForge('perfect')">✓ CORRECT<br><span style="font-size:0.6rem;opacity:0.7;">Verb pos right, case right</span></button>
+        <button class="sa-btn partial" onclick="logForge('partial')">~ MISTAKES<br><span style="font-size:0.6rem;opacity:0.7;">Mostly right, small errors</span></button>
+        <button class="sa-btn wrong-a" onclick="logForge('wrong')">✕ WRONG<br><span style="font-size:0.6rem;opacity:0.7;">Try again tomorrow</span></button>
+      </div>
+    </div>
+    <div class="forge-log" id="forge-log">
+      <div class="fl-title">TODAY'S SENTENCES ──────────────────</div>
+      <div id="fl-entries"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="display:none;"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// VOICE ENGINE
+// ═══════════════════════════════════════════════
+let deVoice = null;
+function initVoices() {
+  const vs = window.speechSynthesis.getVoices();
+  deVoice = vs.find(v => v.lang === 'de-DE' && /male/i.test(v.name))
+          || vs.find(v => v.lang === 'de-DE')
+          || vs.find(v => v.lang.startsWith('de'));
+}
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = initVoices;
+  setTimeout(initVoices, 600);
+}
+function speak(text, btnEl) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'de-DE'; u.pitch = 0.85; u.rate = 0.8; u.volume = 1;
+  if (deVoice) u.voice = deVoice;
+  if (btnEl) {
+    btnEl.classList.add('playing');
+    u.onend = () => btnEl.classList.remove('playing');
+  }
+  window.speechSynthesis.speak(u);
+}
+function audBtn(text) {
+  const esc = text.replace(/'/g, "\\'");
+  return `<button class="aud" onclick="speak('${esc}',this)" title="Hear pronunciation">🔊</button>`;
+}
+// ═══════════════════════════════════════════════
+// DATA — ALL 7 DAYS FROM THE CODEX PLAIN TEXT
+// ═══════════════════════════════════════════════
+const DAYS = [
+{
+  id:1, title:"The Four Cases & Master Tables",
+  subtitle:"Cases · Nominative · Accusative · Dative · Genitive",
+  tags:["CASES","ARTICLES","TRIGGERS","NOM/ACC/DAT/GEN"],
+  lessonHTML:`
+    <h3>WHY CASES EXIST</h3>
+    <p>German is a case language. Instead of relying on word order, it marks the role of a noun directly on the article. There are four roles, called cases.</p>
+    <table class="gtable">
+      <tr><th>CASE</th><th>ROLE</th><th>QUESTION</th><th>EXAMPLE</th></tr>
+      <tr><td class="rl">Nominative</td><td>Doer (subject)</td><td>Wer? (Who?)</td><td>Der Hund ${audBtn('der Hund')} schläft.</td></tr>
+      <tr><td class="rl">Accusative</td><td>Receiver (direct object)</td><td>Wen? (Whom?)</td><td>Ich sehe den Hund. ${audBtn('Ich sehe den Hund.')}</td></tr>
+      <tr><td class="rl">Dative</td><td>Target (indirect object)</td><td>Wem? (To whom?)</td><td>Ich gebe dem Mann ${audBtn('Ich gebe dem Mann das Buch.')} das Buch.</td></tr>
+      <tr><td class="rl">Genitive</td><td>Owner (possession)</td><td>Wessen? (Whose?)</td><td>Das Auto meines Bruders. ${audBtn('Das Auto meines Bruders.')}</td></tr>
+    </table>
+    <div class="why-box"><p>English lost its case system ~800 years ago (it survives only in pronouns: I/me, he/him). German kept it. The case on the article tells you the noun's function, allowing flexible word order for emphasis without ambiguity.</p></div>
+    <h3>MASTER ARTICLE TABLE — DEFINITE (the)</h3>
+    <table class="gtable">
+      <tr><th>CASE</th><th>MASC (der)</th><th>FEM (die)</th><th>NEUT (das)</th><th>PLURAL (die)</th></tr>
+      <tr><td class="rl">Nominative</td><td>der ${audBtn('der')}</td><td>die ${audBtn('die')}</td><td>das ${audBtn('das')}</td><td>die</td></tr>
+      <tr><td class="rl">Accusative</td><td class="ch">den ${audBtn('den')}</td><td>die</td><td>das</td><td>die</td></tr>
+      <tr><td class="rl">Dative</td><td>dem ${audBtn('dem')}</td><td class="ch">der</td><td>dem</td><td class="ch">den (+n on noun)</td></tr>
+      <tr><td class="rl">Genitive</td><td>des (+s/es) ${audBtn('des')}</td><td>der</td><td>des (+s/es)</td><td>der</td></tr>
+    </table>
+    <h3>MASTER ARTICLE TABLE — INDEFINITE (a/an · kein)</h3>
+    <table class="gtable">
+      <tr><th>CASE</th><th>MASCULINE</th><th>FEMININE</th><th>NEUTER</th></tr>
+      <tr><td class="rl">Nominative</td><td>ein / kein ${audBtn('ein')}</td><td>eine / keine ${audBtn('eine')}</td><td>ein / kein</td></tr>
+      <tr><td class="rl">Accusative</td><td class="ch">einen / keinen ${audBtn('einen')}</td><td>eine / keine</td><td>ein / kein</td></tr>
+      <tr><td class="rl">Dative</td><td>einem / keinem ${audBtn('einem')}</td><td class="ch">einer / keiner ${audBtn('einer')}</td><td>einem / keinem</td></tr>
+      <tr><td class="rl">Genitive</td><td>eines / keines (+s) ${audBtn('eines')}</td><td>einer / keiner</td><td>eines / keines (+s)</td><td>keiner</td></tr>
+    </table>
+    <div class="why-box"><p>These are not designed — they are archaeological ruins. Over 2,500 years, unstressed syllables eroded, forms merged. The masculine accusative -n survived as a fossil. Possessive articles (mein, dein, sein, etc.) follow exactly the same pattern as ein/kein.</p></div>
+    <h3>ACCUSATIVE-ONLY PREPOSITIONS</h3>
+    <div class="trig-list">
+      <span class="tw" onclick="speak(this.textContent,this)">durch</span>
+      <span class="tw" onclick="speak(this.textContent,this)">für</span>
+      <span class="tw" onclick="speak(this.textContent,this)">gegen</span>
+      <span class="tw" onclick="speak(this.textContent,this)">ohne</span>
+      <span class="tw" onclick="speak(this.textContent,this)">um</span>
+      <span class="tw" onclick="speak(this.textContent,this)">bis</span>
+      <span class="tw" onclick="speak(this.textContent,this)">entlang</span>
+    </div>
+    <h3>DATIVE-ONLY PREPOSITIONS</h3>
+    <div class="trig-list">
+      <span class="tw dat" onclick="speak(this.textContent,this)">aus</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">außer</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">bei</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">mit</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">nach</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">seit</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">von</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">zu</span>
+      <span class="tw dat" onclick="speak(this.textContent,this)">gegenüber</span>
+    </div>
+    <h3>GENITIVE-ONLY PREPOSITIONS</h3>
+    <div class="trig-list">
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">wegen</span>
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">trotz</span>
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">während</span>
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">statt</span>
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">innerhalb</span>
+      <span class="tw" style="border-color:var(--purple);color:var(--purple)" onclick="speak(this.textContent,this)">außerhalb</span>
+    </div>
+    <h3>DATIVE TRIGGER VERBS</h3>
+    <div class="trig-list">
+      <span class="tw vb" onclick="speak(this.textContent,this)">helfen</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">danken</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">gehören</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">gefallen</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">schmecken</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">passen</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">antworten</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">vertrauen</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">gratulieren</span>
+      <span class="tw vb" onclick="speak(this.textContent,this)">verzeihen</span>
+    </div>
+    <h3>UNPACKED EXAMPLES</h3>
+    <table class="gtable">
+      <tr><th>SENTENCE</th><th>AUDIO</th><th>DISSECTION</th></tr>
+      <tr><td>Der Hund schläft.</td><td>${audBtn('Der Hund schläft.')}</td><td>Der Hund = Nominative. Doer.</td></tr>
+      <tr><td>Ich sehe den Hund.</td><td>${audBtn('Ich sehe den Hund.')}</td><td>Ich = Nom. den Hund = Accusative masc. Receiver.</td></tr>
+      <tr><td>Ich gebe dem Mann das Buch.</td><td>${audBtn('Ich gebe dem Mann das Buch.')}</td><td>Ich=Nom. dem Mann=Dative. das Buch=Accusative neuter.</td></tr>
+      <tr><td>Das ist das Auto meines Bruders.</td><td>${audBtn('Das ist das Auto meines Bruders.')}</td><td>meines Bruders = Genitive masculine. Owner.</td></tr>
+      <tr><td>Wegen des schlechten Wetters bleiben wir zu Hause.</td><td>${audBtn('Wegen des schlechten Wetters bleiben wir zu Hause.')}</td><td>Wegen = genitive preposition. des Wetters = genitive neuter. bleiben = position 2. wir = nominative subject.</td></tr>
+      <tr><td>Er hilft der Frau.</td><td>${audBtn('Er hilft der Frau.')}</td><td>Er = Nom. hilft = dative-trigger verb. der Frau = Dative feminine.</td></tr>
+      <tr><td>Ich fahre mit dem Bus.</td><td>${audBtn('Ich fahre mit dem Bus.')}</td><td>mit = dative trigger. dem Bus = Dative masculine.</td></tr>
+      <tr><td>Das Buch des Lehrers ist alt.</td><td>${audBtn('Das Buch des Lehrers ist alt.')}</td><td>des Lehrers = Genitive masculine. Owner.</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"What job does 'der Hund' have in 'Der Hund schläft'?",audio:"Der Hund schläft.",opts:["Doer (Nominative)","Receiver (Accusative)","Target (Dative)","Owner (Genitive)"],ans:0,exp:"Der Hund is the subject performing the action — Doer = Nominative."},
+    {q:"What job does 'den Hund' have in 'Ich sehe den Hund'?",audio:"Ich sehe den Hund.",opts:["Doer (Nominative)","Receiver (Accusative)","Target (Dative)","Owner (Genitive)"],ans:1,exp:"Den Hund is directly 'seen' — Receiver = Accusative. The -en on 'den' is the masculine accusative marker."},
+    {q:"In 'Ich gebe dem Mann das Buch', what case is 'dem Mann'?",audio:"Ich gebe dem Mann das Buch.",opts:["Nominative","Accusative","Dative","Genitive"],ans:2,exp:"dem Mann is the target of the giving — the person receiving. This is Dative. Masculine dative: der→dem."},
+    {q:"In 'Das ist das Auto meines Bruders', what case is 'meines Bruders'?",audio:"Das ist das Auto meines Bruders.",opts:["Accusative","Dative","Genitive","Nominative"],ans:2,exp:"meines Bruders expresses possession/ownership — Genitive. Note the -es on 'meines' and the -s on 'Bruders'."},
+    {q:"Is 'mit' a dative trigger preposition?",opts:["Yes — always dative","No — it takes accusative","Depends on the noun"],ans:0,exp:"mit is one of the 9 dative trigger prepositions. It always forces dative regardless of context."},
+    {q:"Is 'für' a dative or accusative trigger?",opts:["Dative","Accusative","Neither — it takes genitive"],ans:1,exp:"für takes the accusative. Only the dative prepositions (aus, außer, bei, mit, nach, seit, von, zu, gegenüber) force dative."},
+    {q:"Is 'helfen' a dative trigger verb?",opts:["Yes","No"],ans:0,exp:"helfen always takes a dative object. Kannst du mir helfen? (mir = dative of ich). The person helped is always in the dative."},
+    {q:"Which case changes 'der' to 'den' for masculine nouns?",opts:["Accusative","Dative","Genitive","Nominative"],ans:0,exp:"In the Accusative, masculine articles change: der→den, ein→einen. This is the ONLY change in accusative — feminine, neuter, and plural stay the same."},
+    {q:"Which question word tests for Genitive?",opts:["Wer?","Wen?","Wem?","Wessen?"],ans:3,exp:"Wessen? (Whose?) tests for Genitive. Wer=Nominative, Wen=Accusative, Wem=Dative."},
+    {q:"In 'Wegen des Wetters', what case is 'des Wetters'?",audio:"Wegen des Wetters.",opts:["Accusative","Dative","Genitive"],ans:2,exp:"wegen is a genitive preposition (like trotz, während, statt). It always forces the following noun into genitive."},
+    {q:"In 'Er hilft der Frau', what case is 'der Frau'?",audio:"Er hilft der Frau.",opts:["Nominative","Accusative","Dative"],ans:2,exp:"helfen is a dative trigger verb. der Frau = feminine dative (die→der in dative)."},
+    {q:"In 'Ich fahre mit dem Bus', what case is 'dem Bus'?",audio:"Ich fahre mit dem Bus.",opts:["Accusative","Dative","Genitive"],ans:1,exp:"mit is a dative trigger preposition. dem Bus = masculine dative (der→dem in dative)."},
+    {q:"What is the accusative of 'der Mann'?",opts:["der Mann","den Mann","dem Mann","des Mannes"],ans:1,exp:"Masculine accusative: der→den. So der Mann becomes den Mann. Only masculine changes in accusative."},
+    {q:"What is the dative of 'die Frau'?",opts:["die Frau","der Frau","den Frau","dem Frau"],ans:1,exp:"Feminine dative: die→der. So die Frau becomes der Frau. Note: this 'der' is feminine dative, NOT masculine nominative."},
+    {q:"What is the genitive of 'das Auto' (definite article)?",opts:["dem Auto","den Auto","des Autos","das Auto"],ans:2,exp:"Neuter genitive: das→des, AND the noun adds -s or -es. das Auto → des Autos."},
+    {q:"Do feminine nouns change their article in Accusative?",opts:["Yes, they change","No — feminine stays die/eine in accusative"],ans:1,exp:"Only masculine changes in accusative (der→den, ein→einen). Feminine (die/eine), neuter (das/ein), and plural (die) stay unchanged."},
+    {q:"What is the accusative of 'ein Hund'?",opts:["einen Hund","ein Hund","einem Hund","eines Hundes"],ans:0,exp:"Masculine indefinite accusative: ein→einen. So ein Hund → einen Hund."},
+    {q:"What is the dative of 'kein Auto' (neuter)?",opts:["keinem Auto","keinen Auto","kein Auto","keines Autos"],ans:0,exp:"kein follows the same pattern as ein. Neuter dative: kein→keinem. So kein Auto → keinem Auto."},
+    {q:"What is the genitive of 'kein Buch' (neuter)?",opts:["keines Buches","keinem Buch","keinen Buch","kein Buch"],ans:0,exp:"Neuter genitive: kein→keines, and noun adds -es. keines Buches."},
+    {q:"The dative plural of 'die Kinder' is:",audio:"den Kindern",opts:["die Kinder (no change)","den Kindern","dem Kindern","der Kinder"],ans:1,exp:"Plural dative: die→den, AND the noun gets -n added. Kinder→Kindern. Both changes happen simultaneously."}
+  ],
+  dissections:[
+    {sent:"Der Hund schläft.",en:"The dog sleeps.",words:[
+      {w:"Der",role:"Article",case:"nom",why:"Masculine nominative article — der Hund is the subject performing the action."},
+      {w:"Hund",role:"Noun — Subject",case:"nom",why:"Doer of the verb. Nominative case. The entity sleeping."},
+      {w:"schläft",role:"Verb",case:"verb",why:"Conjugated verb in position 2. 3rd person singular of schlafen."}
+    ]},
+    {sent:"Ich gebe dem Mann das Buch.",en:"I give the man the book.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"1st person singular nominative. The doer giving."},
+      {w:"gebe",role:"Verb",case:"verb",why:"Conjugated verb in position 2. 1st person singular of geben."},
+      {w:"dem",role:"Article",case:"dat",why:"Masculine dative article — dem Mann is the indirect object (target/recipient of the giving)."},
+      {w:"Mann",role:"Noun — Indirect Object",case:"dat",why:"Target. He receives the book. Dative case."},
+      {w:"das",role:"Article",case:"acc",why:"Neuter accusative article — das Buch is the direct object (the thing being given). Neuter doesn't change between nom/acc."},
+      {w:"Buch",role:"Noun — Direct Object",case:"acc",why:"Receiver. The thing being given. Accusative case."}
+    ]},
+    {sent:"Er hilft der Frau.",en:"He helps the woman.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"3rd person singular masculine nominative. The doer helping."},
+      {w:"hilft",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of helfen. Helfen is a DATIVE TRIGGER VERB — its object must be dative."},
+      {w:"der",role:"Article",case:"dat",why:"Feminine dative article — die→der in dative. helfen forces its object into dative."},
+      {w:"Frau",role:"Noun — Dative Object",case:"dat",why:"Target. helfen always takes a dative object — the person helped is always dative."}
+    ]},
+    {sent:"Wegen des schlechten Wetters bleiben wir zu Hause.",en:"Because of the bad weather, we are staying home.",words:[
+      {w:"Wegen",role:"Genitive Preposition",case:"gen",why:"wegen is a genitive preposition — it forces the following noun into genitive case."},
+      {w:"des",role:"Article",case:"gen",why:"Neuter genitive article: das→des. Wetter is neuter. Forced by wegen."},
+      {w:"schlechten",role:"Adjective",case:"gen",why:"Adjective in genitive context after definite article — weak ending -en."},
+      {w:"Wetters",role:"Noun",case:"gen",why:"Genitive neuter. The -s ending on the noun confirms genitive. 'Because of the weather.'"},
+      {w:"bleiben",role:"Verb",case:"verb",why:"Position 2 in the main clause. The genitive prepositional phrase occupied position 1, forcing inversion."},
+      {w:"wir",role:"Pronoun — Subject",case:"nom",why:"Nominative. Subject pushed to position 3 by the fronted prepositional phrase."},
+      {w:"zu",role:"Dative Preposition",case:"dat",why:"zu is a dative trigger preposition. zu Hause is a fixed expression meaning 'at home.'"},
+      {w:"Hause",role:"Noun",case:"dat",why:"Dative of das Haus. zu Hause = fixed dative expression for 'at home.'"}
+    ]},
+    {sent:"Ich fahre mit dem Bus.",en:"I travel by bus.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"1st person singular nominative. The doer."},
+      {w:"fahre",role:"Verb",case:"verb",why:"Position 2. 1st person singular of fahren."},
+      {w:"mit",role:"Dative Preposition",case:"dat",why:"mit is one of the 9 dative trigger prepositions — it always forces dative."},
+      {w:"dem",role:"Article",case:"dat",why:"Masculine dative article: der→dem. Bus is masculine (der Bus)."},
+      {w:"Bus",role:"Noun",case:"dat",why:"Masculine dative. Forced by the preposition mit."}
+    ]},
+    {sent:"Das Buch des Lehrers ist alt.",en:"The teacher's book is old.",words:[
+      {w:"Das",role:"Article",case:"nom",why:"Neuter nominative article. das Buch is the subject."},
+      {w:"Buch",role:"Noun — Subject",case:"nom",why:"Neuter nominative. The subject — the thing being described as old."},
+      {w:"des",role:"Article",case:"gen",why:"Masculine genitive article: der→des. Lehrer is masculine."},
+      {w:"Lehrers",role:"Noun",case:"gen",why:"Masculine genitive. The -s ending confirms genitive. 'Of the teacher' = ownership/relationship."},
+      {w:"ist",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of sein."},
+      {w:"alt",role:"Adjective (Predicate)",case:"other",why:"Predicate adjective after sein — no case ending needed when it follows the verb."}
+    ]}
+  ]
+},
+{
+  id:2, title:"Personal Pronouns & Trigger System",
+  subtitle:"The Chant · ich mich mir · Dative Verbs · Preposition Triggers",
+  tags:["PRONOUNS","DATIVE VERBS","CHANT","TRIGGER SYSTEM"],
+  lessonHTML:`
+    <h3>THE FOUR-CASE PRONOUN TABLE</h3>
+    <p>Pronouns resist change because they are used so frequently — their irregular forms are ancient fossils. Chant them until they are rhythm.</p>
+    <p style="font-size:1rem;color:var(--gold);letter-spacing:2px;margin:14px 0;">ich — mich — mir &nbsp;·&nbsp; du — dich — dir &nbsp;·&nbsp; er — ihn — ihm ${audBtn('ich mich mir. du dich dir. er ihn ihm.')}</p>
+    <table class="gtable">
+      <tr><th>PERSON</th><th>DOER (Nom)</th><th>RECEIVER (Acc)</th><th>TARGET (Dat)</th></tr>
+      <tr><td class="rl">I</td><td>ich ${audBtn('ich')}</td><td class="ch">mich ${audBtn('mich')}</td><td class="hl">mir ${audBtn('mir')}</td></tr>
+      <tr><td class="rl">you (inf.)</td><td>du ${audBtn('du')}</td><td class="ch">dich ${audBtn('dich')}</td><td class="hl">dir ${audBtn('dir')}</td></tr>
+      <tr><td class="rl">he</td><td>er ${audBtn('er')}</td><td class="ch">ihn ${audBtn('ihn')}</td><td class="hl">ihm ${audBtn('ihm')}</td></tr>
+      <tr><td class="rl">she</td><td>sie ${audBtn('sie')}</td><td>sie</td><td class="hl">ihr ${audBtn('ihr')}</td></tr>
+      <tr><td class="rl">it</td><td>es ${audBtn('es')}</td><td>es</td><td class="hl">ihm</td></tr>
+      <tr><td class="rl">we</td><td>wir ${audBtn('wir')}</td><td>uns ${audBtn('uns')}</td><td class="hl">uns</td></tr>
+      <tr><td class="rl">you all</td><td>ihr ${audBtn('ihr')}</td><td>euch ${audBtn('euch')}</td><td class="hl">euch</td></tr>
+      <tr><td class="rl">they / Sie</td><td>sie / Sie</td><td>sie / Sie</td><td class="hl">ihnen / Ihnen ${audBtn('ihnen')}</td></tr>
+    </table>
+    <div class="why-box"><p>Why are pronouns irregular? High-frequency words resist change. Ich, mich, mir predate modern German by over 1,000 years. While nouns simplified, pronouns preserved their ancient case forms. The irregularity is age — you're seeing Old High German fossils.</p></div>
+    <h3>DATIVE TRIGGER VERBS WITH PRONOUNS</h3>
+    <p>These verbs always put the person in dative, even when there's no visible "to" in English:</p>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>WHY DATIVE</th></tr>
+      <tr><td>Kannst du mir helfen?</td><td>${audBtn('Kannst du mir helfen?')}</td><td>helfen → dative trigger → ich→mir</td></tr>
+      <tr><td>Ich danke dir.</td><td>${audBtn('Ich danke dir.')}</td><td>danken → dative → du→dir</td></tr>
+      <tr><td>Das gehört ihm.</td><td>${audBtn('Das gehört ihm.')}</td><td>gehören → dative → er→ihm</td></tr>
+      <tr><td>Das ist für dich.</td><td>${audBtn('Das ist für dich.')}</td><td>für → ACCUSATIVE trigger → du→dich</td></tr>
+      <tr><td>Wir warten auf ihn.</td><td>${audBtn('Wir warten auf ihn.')}</td><td>warten auf → accusative → er→ihn</td></tr>
+      <tr><td>Sie erklärt ihm die Aufgabe.</td><td>${audBtn('Sie erklärt ihm die Aufgabe.')}</td><td>Target of explaining → dative → er→ihm</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"Dative of 'ich' is:",opts:["mich","mir","ich","meiner"],ans:1,exp:"Pronoun chant: ich → mich (acc) → mir (dat). Mir is the dative form."},
+    {q:"Accusative of 'du' is:",opts:["dich","dir","du","deiner"],ans:0,exp:"Pronoun chant: du → dich (acc) → dir (dat). Dich is accusative."},
+    {q:"'Kannst du ___ helfen?' (me)",audio:"Kannst du mir helfen?",opts:["mich","mir","ich","meiner"],ans:1,exp:"helfen is a dative trigger verb. Object must be dative. Ich → dative = mir."},
+    {q:"'Ich danke ___.' (you, informal)",audio:"Ich danke dir.",opts:["dich","dir","du","dein"],ans:1,exp:"danken takes dative. du → dative = dir. Ich danke dir."},
+    {q:"'Das gehört ___.' (to him)",audio:"Das gehört ihm.",opts:["ihn","ihm","er","sein"],ans:1,exp:"gehören takes dative. Er → dative = ihm."},
+    {q:"'Ich sehe ___.' (him)",audio:"Ich sehe ihn.",opts:["ihn","ihm","er","sein"],ans:0,exp:"sehen takes accusative (direct object). Er → accusative = ihn."},
+    {q:"'Er gibt ___ das Buch.' (to her)",audio:"Er gibt ihr das Buch.",opts:["sie","ihr","ihren","ihr"],ans:1,exp:"geben has a dative recipient. Sie (she) → dative = ihr."},
+    {q:"'Das ist für ___.' (for you, informal — für takes accusative)",audio:"Das ist für dich.",opts:["dich","dir","du"],ans:0,exp:"für takes accusative. Du → accusative = dich."},
+    {q:"'Wir helfen ___.' (them)",audio:"Wir helfen ihnen.",opts:["ihn","ihnen","sie","ihr"],ans:1,exp:"helfen takes dative. Sie (they) → dative = ihnen."},
+    {q:"'Können Sie ___ zeigen?' (to us)",opts:["wir","uns","euch","mir"],ans:1,exp:"zeigen with a recipient takes dative. Wir → dative = uns."},
+    {q:"Accusative of 'er' is:",opts:["ihn","ihm","er","seiner"],ans:0,exp:"er → ihn (acc) → ihm (dat). Ihn is accusative."},
+    {q:"Dative of 'sie' (she) is:",opts:["sie","ihr","ihrer","ihnen"],ans:1,exp:"sie (she) → sie (acc, unchanged) → ihr (dat). Ihr is the dative form."},
+    {q:"'Ich liebe ___.' (you, informal)",audio:"Ich liebe dich.",opts:["du","dich","dir","dein"],ans:1,exp:"lieben takes accusative. Du → accusative = dich. Ich liebe dich."},
+    {q:"'Das ist von ___.' (from you, informal — von takes dative)",audio:"Das ist von dir.",opts:["dich","dir","du"],ans:1,exp:"von is a dative trigger preposition. Du → dative = dir."},
+    {q:"'Sie fragt ___.' (him — fragen takes accusative)",audio:"Sie fragt ihn.",opts:["ihn","ihm","er"],ans:0,exp:"fragen takes accusative (you ask someone directly). Er → accusative = ihn."},
+    {q:"'Ich komme mit ___.' (with you all — mit takes dative)",audio:"Ich komme mit euch.",opts:["ihr","euch","euer"],ans:1,exp:"mit is a dative trigger. Ihr (you all) → dative = euch."},
+    {q:"'Gib ___ das Wasser.' (to me)",audio:"Gib mir das Wasser.",opts:["mich","mir","ich"],ans:1,exp:"geben with a recipient takes dative. Ich → dative = mir."},
+    {q:"'Wir sehen ___.' (you all)",audio:"Wir sehen euch.",opts:["ihr","euch","euer"],ans:1,exp:"sehen takes accusative. Ihr (you all) → accusative = euch."},
+    {q:"'Ich glaube ___.' (him — glauben takes dative)",audio:"Ich glaube ihm.",opts:["ihn","ihm","er"],ans:1,exp:"glauben takes a dative object. Er → dative = ihm. Ich glaube ihm = I believe him."},
+    {q:"'Das freut ___.' (me — freuen takes accusative)",audio:"Das freut mich.",opts:["mich","mir","ich"],ans:0,exp:"freuen takes accusative. Ich → accusative = mich. Das freut mich = That pleases me."}
+  ],
+  dissections:[
+    {sent:"Kannst du mir helfen?",en:"Can you help me?",words:[
+      {w:"Kannst",role:"Modal Verb",case:"verb",why:"Position 1 — yes/no question. kannst = 2nd person singular of können. Modal verb sends main verb to end."},
+      {w:"du",role:"Pronoun — Subject",case:"nom",why:"Nominative subject pushed to position 2 by the question structure."},
+      {w:"mir",role:"Pronoun — Dative Object",case:"dat",why:"mir = dative of ich. helfen is a dative trigger verb — its object must always be dative."},
+      {w:"helfen",role:"Verb (Infinitive)",case:"verb",why:"Main verb at the END — pushed there by the modal verb kannst."}
+    ]},
+    {sent:"Ich danke dir.",en:"I thank you.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular. The doer."},
+      {w:"danke",role:"Verb",case:"verb",why:"Position 2. 1st person singular of danken. Dative trigger verb."},
+      {w:"dir",role:"Pronoun — Dative Object",case:"dat",why:"dir = dative of du. danken always takes a dative object — the person thanked is dative."}
+    ]},
+    {sent:"Das ist für dich.",en:"That is for you.",words:[
+      {w:"Das",role:"Pronoun — Subject",case:"nom",why:"Nominative demonstrative pronoun. The subject."},
+      {w:"ist",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of sein."},
+      {w:"für",role:"Accusative Preposition",case:"acc",why:"für is an accusative-only preposition. It forces the following noun/pronoun into accusative."},
+      {w:"dich",role:"Pronoun — Accusative Object",case:"acc",why:"dich = accusative of du. Forced by the preposition für."}
+    ]},
+    {sent:"Wir helfen euch.",en:"We help you all.",words:[
+      {w:"Wir",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person plural. The doers."},
+      {w:"helfen",role:"Verb",case:"verb",why:"Position 2. 1st person plural of helfen. Dative trigger verb."},
+      {w:"euch",role:"Pronoun — Dative Object",case:"dat",why:"euch is BOTH accusative AND dative of ihr. Here it is dative because helfen forces dative."}
+    ]},
+    {sent:"Trotz des Regens spielen sie.",en:"Despite the rain, they are playing.",words:[
+      {w:"Trotz",role:"Genitive Preposition",case:"gen",why:"trotz is a genitive preposition — it forces the following noun into genitive case."},
+      {w:"des",role:"Article",case:"gen",why:"Masculine genitive article: der→des. Regen is masculine (der Regen)."},
+      {w:"Regens",role:"Noun",case:"gen",why:"Masculine genitive. The -s ending on the noun confirms genitive. 'Of the rain' / 'despite the rain.'"},
+      {w:"spielen",role:"Verb",case:"verb",why:"Position 2 in main clause. The genitive prepositional phrase (Trotz des Regens) occupies position 1, forcing verb-subject inversion."},
+      {w:"sie",role:"Pronoun — Subject",case:"nom",why:"Nominative. 3rd person plural. Subject pushed to position 3 by the fronted prepositional phrase."}
+    ]},
+    {sent:"Er gibt mir das Geld.",en:"He gives me the money.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"3rd person singular masculine nominative. The doer giving."},
+      {w:"gibt",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of geben."},
+      {w:"mir",role:"Pronoun — Dative Object",case:"dat",why:"mir = dative of ich. The recipient of the giving. geben takes a dative recipient and an accusative object."},
+      {w:"das",role:"Article",case:"acc",why:"Neuter accusative article. das Geld is the direct object (the thing being given). Neuter nom=acc."},
+      {w:"Geld",role:"Noun — Direct Object",case:"acc",why:"Accusative. The thing being given. Receiver."}
+    ]}
+  ]
+},
+{
+  id:3, title:"Word Order — 3 Laws Only",
+  subtitle:"Position 2 · Question/Command · Verb-Final · Connectors",
+  tags:["WORD ORDER","POSITION 2","VERB-FINAL","V2 RULE","CONNECTORS"],
+  lessonHTML:`
+    <h3>3 RULES. ALL OF GERMAN.</h3>
+    <p>German word order follows exactly three core rules. Every sentence you encounter obeys at least one of them.</p>
+    <h3>RULE 1 — POSITION 2 (Main Clause)</h3>
+    <p>The conjugated verb is ALWAYS in position 2. Whatever comes first — time, place, subject, object, subordinate clause — the verb holds position 2 like an anchor.</p>
+    <div class="wo-vis">
+      <div class="wb"><span class="pos">POSITION 1</span>Heute ${audBtn('Heute')}</div>
+      <div class="wb vp"><span class="pos">POSITION 2 — VERB</span>lerne ${audBtn('lerne')}</div>
+      <div class="wb"><span class="pos">POSITION 3+</span>ich Deutsch.</div>
+    </div>
+    <div class="wo-vis">
+      <div class="wb"><span class="pos">POSITION 1</span>Wenn ich Zeit habe,</div>
+      <div class="wb vp"><span class="pos">POSITION 2 — VERB</span>komme ${audBtn('komme')}</div>
+      <div class="wb"><span class="pos">POSITION 3+</span>ich.</div>
+    </div>
+    <div class="why-box"><p>Why position 2? By Middle High German (1200s), verb-second was fixed in main clauses. It provides a rhythmic skeleton: beat 2 always carries the action, giving listeners a clear structural landmark.</p></div>
+    <h3>RULE 2 — POSITION 1 (Questions & Commands)</h3>
+    <p>Yes/no questions or commands: the verb moves to position 1.</p>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>TYPE</th></tr>
+      <tr><td>Lernst du Deutsch?</td><td>${audBtn('Lernst du Deutsch?')}</td><td>Yes/no question — verb first</td></tr>
+      <tr><td>Geh nach Hause!</td><td>${audBtn('Geh nach Hause!')}</td><td>Command — verb first</td></tr>
+      <tr><td>Hast du Zeit?</td><td>${audBtn('Hast du Zeit?')}</td><td>Yes/no question</td></tr>
+    </table>
+    <h3>RULE 3 — VERB-FINAL (After Connector Words)</h3>
+    <p>After these subordinating conjunctions, the conjugated verb goes to the VERY END of its clause:</p>
+    <div class="trig-list">
+      <span class="tw conn" onclick="speak(this.textContent,this)">weil</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">dass</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">wenn</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">obwohl</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">als</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">bevor</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">nachdem</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">damit</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">ob</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">falls</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">seitdem</span>
+      <span class="tw conn" onclick="speak(this.textContent,this)">sobald</span>
+    </div>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>NOTE</th></tr>
+      <tr><td>Ich bleibe zu Hause, weil es regnet.</td><td>${audBtn('Ich bleibe zu Hause, weil es regnet.')}</td><td>regnet at END — after weil</td></tr>
+      <tr><td>Ich weiß, dass du recht hast.</td><td>${audBtn('Ich weiß, dass du recht hast.')}</td><td>hast at END — after dass</td></tr>
+      <tr><td>Wenn ich Zeit habe, komme ich.</td><td>${audBtn('Wenn ich Zeit habe, komme ich.')}</td><td>habe at END. Then main clause inverts.</td></tr>
+    </table>
+    <div class="why-box"><p>Why verb-final after weil/dass/wenn? Subordinate clauses preserve the OLDER verb-final pattern of Proto-Germanic. Main clauses innovated verb-second order. The two systems have coexisted for 1,000+ years. weil + verb-last is the ancient pattern preserved.</p></div>
+    <h3>COORDINATING CONJUNCTIONS (Normal order — NO verb movement)</h3>
+    <div class="trig-list">
+      <span class="tw" onclick="speak(this.textContent,this)">und</span>
+      <span class="tw" onclick="speak(this.textContent,this)">aber</span>
+      <span class="tw" onclick="speak(this.textContent,this)">oder</span>
+      <span class="tw" onclick="speak(this.textContent,this)">denn</span>
+      <span class="tw" onclick="speak(this.textContent,this)">sondern</span>
+    </div>
+    <h3>ADVERBIAL CONNECTORS (Position 1 of new main clause — verb follows immediately)</h3>
+    <div class="trig-list">
+      <span class="tw" onclick="speak(this.textContent,this)">deshalb</span>
+      <span class="tw" onclick="speak(this.textContent,this)">trotzdem</span>
+      <span class="tw" onclick="speak(this.textContent,this)">daher</span>
+      <span class="tw" onclick="speak(this.textContent,this)">dennoch</span>
+      <span class="tw" onclick="speak(this.textContent,this)">allerdings</span>
+      <span class="tw" onclick="speak(this.textContent,this)">sonst</span>
+    </div>
+    <p>${audBtn('Ich bin müde, deshalb gehe ich schlafen.')} Ich bin müde, <strong>deshalb</strong> gehe ich schlafen. (deshalb = position 1 → verb immediately after)</p>
+    <h3>RELATIVE CLAUSES</h3>
+    <p>Relative pronoun matches gender/number of antecedent, takes case from its role inside the clause. Verb at end.</p>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>RELATIVE PRONOUN</th></tr>
+      <tr><td>Der Mann, der dort steht, ist mein Vater.</td><td>${audBtn('Der Mann, der dort steht, ist mein Vater.')}</td><td>der = masc. nominative (Mann steht)</td></tr>
+      <tr><td>Die Frau, die ich sehe, ist nett.</td><td>${audBtn('Die Frau, die ich sehe, ist nett.')}</td><td>die = fem. accusative (ich sehe sie)</td></tr>
+      <tr><td>Das Kind, dem ich helfe, lacht.</td><td>${audBtn('Das Kind, dem ich helfe, lacht.')}</td><td>dem = neut. dative (helfen triggers dative)</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"Which is correct? (Time phrase starts the sentence)",opts:["Heute ich lerne Deutsch.","Heute lerne ich Deutsch.","Heute Deutsch lerne ich."],ans:1,exp:"Verb holds position 2 like an anchor. 'Heute' is position 1, so 'lerne' must be position 2, then subject ich follows."},
+    {q:"Which is a correct yes/no question?",opts:["Du lernst Deutsch?","Lernst du Deutsch?","Deutsch lernst du?"],ans:1,exp:"In yes/no questions, the verb moves to position 1. Subject follows at position 2."},
+    {q:"Which is correct after 'weil'?",opts:["weil ich bin müde","weil ich müde bin","weil müde ich bin"],ans:1,exp:"weil is a verb-final connector. The conjugated verb (bin) goes to the END of its clause."},
+    {q:"Which word does NOT send the verb to the end?",opts:["weil","dass","und","wenn"],ans:2,exp:"und (and) is a coordinating conjunction — it keeps normal word order in both clauses. Also: aber, oder, denn, sondern."},
+    {q:"'Heute Abend gehen wir tanzen.' — What position is 'gehen'?",audio:"Heute Abend gehen wir tanzen.",opts:["Position 1","Position 2","Position 3","The end"],ans:1,exp:"'Heute Abend' is position 1 (a time phrase). 'gehen' is position 2. 'wir' is position 3. This is the V2 rule."},
+    {q:"'___ du heute Abend Zeit?' (haben, yes/no question)",opts:["Habe","Hast","Hat","Haben"],ans:1,exp:"Yes/no question: verb to position 1. Du → 2nd person singular → hast. Hast du heute Abend Zeit?"},
+    {q:"'Ich glaube, ___ er krank ist.'",opts:["dass","weil","denn","ob"],ans:0,exp:"'I believe that...' uses dass. dass is also a verb-final connector: er krank ist (NOT: er ist krank)."},
+    {q:"'Ich bleibe zu Hause, ___ es regnet.'",opts:["weil","aber","oder","und"],ans:0,exp:"'Because it rains' = weil. weil is verb-final: weil es regnet (NOT: weil es ist regnet)."},
+    {q:"'___ ich fertig bin, gehe ich schlafen.' (if/when)",opts:["Wenn","Weil","Dass","Ob"],ans:0,exp:"wenn = when/if. Also verb-final. The entire wenn-clause is position 1 in the main clause → verb inversion: gehe ich."},
+    {q:"'Ich weiß nicht, ___ er kommt.' (whether)",opts:["ob","dass","weil","wenn"],ans:0,exp:"ob = whether (indirect questions). Also verb-final: ob er kommt (NOT: ob er kommt er)."},
+    {q:"'Obwohl er klein ___, ist er stark.' (sein)",opts:["ist","war","wäre","sein"],ans:0,exp:"obwohl forces the verb to the end of its clause: obwohl er klein ist. The main clause then has normal V2 order."},
+    {q:"'Nachdem ich gegessen ___, gehe ich spazieren.' (haben)",opts:["habe","hatte","haben","bin"],ans:0,exp:"nachdem is verb-final. In Perfekt: gegessen habe — participle then auxiliary at the very end. Perfekt word order in subordinate clauses."},
+    {q:"'In 'Heute lerne ich Deutsch', what position is 'ich'?",opts:["Position 1","Position 2","Position 3","Position 4"],ans:2,exp:"Heute=P1, lerne=P2 (V2 rule), ich=P3. The subject is pushed back when something else fronts."},
+    {q:"Adverbial connector 'deshalb' sits in which position?",opts:["After the verb","Position 1 of the new main clause","At the end","Before the subject"],ans:1,exp:"Adverbial connectors (deshalb, trotzdem, daher, dennoch) occupy position 1 of the main clause they introduce, forcing verb-subject inversion. Ich bin müde, deshalb GEHE ich schlafen."},
+    {q:"'Der Mann, ___ dort steht, ist mein Vater.' (relative pronoun, masculine nominative)",opts:["der","den","dem","dessen"],ans:0,exp:"Relative pronoun matches gender/number of antecedent (Mann = masculine). Takes case from its role inside the clause: Mann steht (subject) = nominative → der."},
+    {q:"'Das Kind, ___ ich helfe, lacht.' (relative pronoun, neuter dative)",opts:["das","dem","den","dessen"],ans:1,exp:"helfen triggers dative. The child is helped = dative object. neuter dative = dem. Das Kind, dem ich helfe."},
+    {q:"'Es regnet, ___ wir gehen spazieren.' (nevertheless)",opts:["trotzdem","obwohl","weil","dass"],ans:0,exp:"trotzdem = nevertheless. It is an adverbial connector, not a subordinating conjunction — normal word order follows (verb at position 2)."},
+    {q:"'Deshalb ___ ich müde.' (sein)",opts:["ich bin","bin ich","ist ich","ich ist"],ans:1,exp:"deshalb occupies position 1. Verb must be position 2: bin. Subject ich is position 3: Deshalb bin ich müde."},
+    {q:"'Er sagt, ___ er morgen kommt.' (that)",opts:["dass","ob","weil","wenn"],ans:0,exp:"'He says that...' = dass. Verb-final: er morgen kommt (NOT: er kommt morgen — inside the dass-clause)."},
+    {q:"'nämlich' (namely/because-as-explanation) goes where in the clause?",opts:["Position 1 — before verb","After the verb","At the very end","Before the subject"],ans:1,exp:"nämlich always comes AFTER the verb, never at position 1. Ich muss gehen, ich bin nämlich müde. It cannot trigger inversion."}
+  ],
+  dissections:[
+    {sent:"Heute lerne ich Deutsch.",en:"Today I learn German.",words:[
+      {w:"Heute",role:"Adverb — Position 1",case:"other",why:"Time adverb occupying position 1. Its fronting forces verb-subject inversion."},
+      {w:"lerne",role:"Verb — Position 2",case:"verb",why:"Conjugated verb holds position 2 by the V2 rule. 1st person singular of lernen."},
+      {w:"ich",role:"Pronoun — Subject",case:"nom",why:"Nominative subject at position 3 — pushed back because 'Heute' occupies position 1."},
+      {w:"Deutsch",role:"Noun — Direct Object",case:"acc",why:"Accusative. The language being learned. Deutsch is neuter (das Deutsch), stays the same in accusative."}
+    ]},
+    {sent:"Ich bleibe zu Hause, weil es regnet.",en:"I'm staying home because it's raining.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. Subject of the main clause."},
+      {w:"bleibe",role:"Verb — Position 2",case:"verb",why:"V2 rule in main clause."},
+      {w:"zu",role:"Dative Preposition",case:"dat",why:"zu is a dative preposition. zu Hause = fixed dative expression for 'at home.'"},
+      {w:"Hause",role:"Noun — Dative",case:"dat",why:"Dative of das Haus. Fixed expression: zu Hause."},
+      {w:"weil",role:"Subordinating Conjunction",case:"other",why:"weil = because. VERB-FINAL connector — sends the conjugated verb to the END of its clause."},
+      {w:"es",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the weil-clause. Weather 'es' — impersonal subject."},
+      {w:"regnet",role:"Verb — Verb-Final",case:"verb",why:"Conjugated verb at the END because weil is a verb-final connector."}
+    ]},
+    {sent:"Wenn ich Zeit habe, komme ich.",en:"If I have time, I'll come.",words:[
+      {w:"Wenn",role:"Subordinating Conjunction",case:"other",why:"wenn = if/when. Verb-final connector. Sends verb to end of its clause. The entire wenn-clause occupies position 1 of the main clause."},
+      {w:"ich",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the wenn-clause."},
+      {w:"Zeit",role:"Noun — Direct Object",case:"acc",why:"Zeit is the direct object in the subordinate clause. Feminine accusative = same as nominative (die Zeit)."},
+      {w:"habe",role:"Verb — Verb-Final",case:"verb",why:"Verb at END of the wenn-clause. 1st person singular of haben."},
+      {w:"komme",role:"Verb — Position 2 (Main Clause)",case:"verb",why:"The ENTIRE wenn-clause is position 1. So the main verb komme is immediately in position 2 — causing inversion."},
+      {w:"ich",role:"Pronoun — Subject (main)",case:"nom",why:"Nominative subject of the main clause, now at position 3 due to the fronted wenn-clause."}
+    ]},
+    {sent:"Der Mann, der dort steht, ist mein Vater.",en:"The man who stands there is my father.",words:[
+      {w:"Der",role:"Article",case:"nom",why:"Masculine nominative article. der Mann is the subject of the main clause."},
+      {w:"Mann",role:"Noun — Subject",case:"nom",why:"Nominative. Subject of 'ist mein Vater.'"},
+      {w:"der",role:"Relative Pronoun",case:"nom",why:"Masculine nominative relative pronoun. Refers to 'Mann' (masculine). Takes nominative because the man is the SUBJECT inside the relative clause (er steht)."},
+      {w:"dort",role:"Adverb",case:"other",why:"dort = there. Location adverb."},
+      {w:"steht",role:"Verb — Verb-Final (relative clause)",case:"verb",why:"Relative clauses have verb-final order. 3rd person singular of stehen."},
+      {w:"ist",role:"Verb — Position 2 (Main Clause)",case:"verb",why:"V2 rule in the main clause. 3rd person singular of sein."},
+      {w:"mein",role:"Possessive Article",case:"nom",why:"Masculine nominative possessive. Subject complement after sein."},
+      {w:"Vater",role:"Noun — Subject Complement",case:"nom",why:"Nominative. Subject complement after ist."}
+    ]},
+    {sent:"Deshalb bin ich müde.",en:"Therefore I am tired.",words:[
+      {w:"Deshalb",role:"Adverbial Connector — Position 1",case:"other",why:"deshalb = therefore. Adverbial connector. Sits at position 1 — but unlike weil/dass, it does NOT send verb to end. The verb follows immediately at position 2."},
+      {w:"bin",role:"Verb — Position 2",case:"verb",why:"Position 2. The adverbial connector forced subject-verb inversion."},
+      {w:"ich",role:"Pronoun — Subject",case:"nom",why:"Nominative subject at position 3 — pushed back by the fronted adverbial connector."},
+      {w:"müde",role:"Adjective (Predicate)",case:"other",why:"Predicate adjective after sein. No case ending when following the verb."}
+    ]},
+    {sent:"Er sagte, dass er morgen kommen wird.",en:"He said that he will come tomorrow.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"Nominative. Subject of the main clause."},
+      {w:"sagte",role:"Verb — Position 2",case:"verb",why:"V2 rule. Präteritum (simple past) of sagen."},
+      {w:"dass",role:"Subordinating Conjunction",case:"other",why:"dass = that. Verb-final connector. Sends all verbs to the END of its clause."},
+      {w:"er",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the dass-clause."},
+      {w:"morgen",role:"Adverb",case:"other",why:"Time adverb. Inside the subordinate clause, it does not affect verb position — verb still goes to end."},
+      {w:"kommen",role:"Infinitive — Verb-Final",case:"verb",why:"Infinitive at end of the dass-clause. Used with werden for Futur I."},
+      {w:"wird",role:"Auxiliary — Verb-Final",case:"verb",why:"wird = 3rd person singular of werden. Futur I auxiliary. In subordinate clauses, the auxiliary is at the very end after the infinitive."}
+    ]}
+  ]
+},
+{
+  id:4, title:"Adjectives, Comparatives & Weak Nouns",
+  subtitle:"Weak/Strong/Mixed Endings · Comparatives · Superlatives · n-Declension",
+  tags:["ADJECTIVES","WEAK DECLENSION","STRONG DECLENSION","COMPARATIVES","WEAK NOUNS"],
+  lessonHTML:`
+    <h3>THE CORE LOGIC OF ADJECTIVE ENDINGS</h3>
+    <p>One principle governs all three patterns: <strong>case must be visible somewhere</strong>. If the article already shows the case clearly, the adjective relaxes to a weak ending. If the article is absent or ambiguous, the adjective steps up to carry the case signal.</p>
+    <h3>PATTERN 1 — WEAK DECLENSION (after der/die/das)</h3>
+    <p>Article already signals case → adjective relaxes to <strong style="color:var(--gold)">-e</strong> or <strong style="color:var(--gold)">-en</strong>.</p>
+    <table class="gtable">
+      <tr><th>CASE</th><th>MASC</th><th>FEM</th><th>NEUT</th><th>PLURAL</th></tr>
+      <tr><td class="rl">Nominative</td><td>-e</td><td>-e</td><td>-e</td><td>-en</td></tr>
+      <tr><td class="rl">Accusative</td><td>-en</td><td>-e</td><td>-e</td><td>-en</td></tr>
+      <tr><td class="rl">Dative</td><td>-en</td><td>-en</td><td>-en</td><td>-en</td></tr>
+      <tr><td class="rl">Genitive</td><td>-en</td><td>-en</td><td>-en</td><td>-en</td></tr>
+    </table>
+    <p>${audBtn('der große Mann. die schöne Frau. das alte Buch.')} der groß<strong>e</strong> Mann · die schön<strong>e</strong> Frau · das alt<strong>e</strong> Buch · den groß<strong>en</strong> Mann · dem groß<strong>en</strong> Mann</p>
+    <h3>PATTERN 2 — STRONG DECLENSION (no article at all)</h3>
+    <p>No article → adjective carries the full case signal (mirrors the definite article endings).</p>
+    <p>${audBtn('guter Mann. gute Frau. gutes Kind.')} gut<strong>er</strong> Mann · gut<strong>e</strong> Frau · gut<strong>es</strong> Kind · gut<strong>em</strong> Mann (dative) · gut<strong>en</strong> Männern (dative plural)</p>
+    <h3>PATTERN 3 — MIXED DECLENSION (after ein/kein/mein/dein etc.)</h3>
+    <p>If the article has a clear ending already (eine, einen, einem etc.) → adjective takes weak <strong>-en</strong>. If the article has NO ending (nominative masculine 'ein', nominative/accusative neuter 'ein') → adjective takes the strong ending.</p>
+    <table class="gtable">
+      <tr><th>CASE</th><th>MASC</th><th>FEM</th><th>NEUT</th></tr>
+      <tr><td class="rl">Nominative</td><td class="ch">-er (ein guter Mann)</td><td>-e</td><td class="ch">-es (ein gutes Kind)</td></tr>
+      <tr><td class="rl">Accusative</td><td>-en</td><td>-e</td><td>-es</td></tr>
+      <tr><td class="rl">Dative</td><td>-en</td><td>-en</td><td>-en</td></tr>
+      <tr><td class="rl">Genitive</td><td>-en</td><td>-en</td><td>-en</td></tr>
+    </table>
+    <p><strong>B2 Shortcut:</strong> Dative and genitive adjectives almost always end in <strong>-en</strong> regardless of article type.</p>
+    <h3>COMPARATIVES & SUPERLATIVES</h3>
+    <table class="gtable">
+      <tr><th>ADJECTIVE</th><th>COMPARATIVE</th><th>SUPERLATIVE (predicate)</th><th>AUDIO</th></tr>
+      <tr><td>schnell</td><td>schneller</td><td>am schnellsten</td><td>${audBtn('schnell, schneller, am schnellsten')}</td></tr>
+      <tr><td>groß</td><td>größer</td><td>am größten</td><td>${audBtn('groß, größer, am größten')}</td></tr>
+      <tr><td>gut (irreg.)</td><td>besser</td><td>am besten</td><td>${audBtn('gut, besser, am besten')}</td></tr>
+      <tr><td>viel (irreg.)</td><td>mehr</td><td>am meisten</td><td>${audBtn('viel, mehr, am meisten')}</td></tr>
+      <tr><td>gern (irreg.)</td><td>lieber</td><td>am liebsten</td><td>${audBtn('gern, lieber, am liebsten')}</td></tr>
+      <tr><td>hoch (irreg.)</td><td>höher</td><td>am höchsten</td><td>${audBtn('hoch, höher, am höchsten')}</td></tr>
+    </table>
+    <p>${audBtn('Er läuft schneller als ich.')} Er läuft schneller <strong>als</strong> ich. (comparison of difference — use <strong>als</strong>)</p>
+    <p>${audBtn('Sie ist so groß wie er.')} Sie ist so groß <strong>wie</strong> er. (comparison of equality — use <strong>so...wie</strong>)</p>
+    <h3>WEAK MASCULINE NOUNS (n-Declension)</h3>
+    <p>A set of masculine nouns add <strong>-en</strong> (or -n) in ALL cases except nominative singular. They are remnants of an older noun class.</p>
+    <table class="gtable">
+      <tr><th>NOMINATIVE</th><th>ACCUSATIVE</th><th>DATIVE</th><th>GENITIVE</th><th>AUDIO</th></tr>
+      <tr><td>der Student</td><td>den Studenten</td><td>dem Studenten</td><td>des Studenten</td><td>${audBtn('der Student, den Studenten')}</td></tr>
+      <tr><td>der Mensch</td><td>den Menschen</td><td>dem Menschen</td><td>des Menschen</td><td>${audBtn('der Mensch, den Menschen')}</td></tr>
+      <tr><td>der Kollege</td><td>den Kollegen</td><td>dem Kollegen</td><td>des Kollegen</td><td>${audBtn('der Kollege, den Kollegen')}</td></tr>
+      <tr><td>der Name</td><td>den Namen</td><td>dem Namen</td><td>des Namens (special!)</td><td>${audBtn('der Name, den Namen')}</td></tr>
+      <tr><td>der Herr</td><td>den Herrn</td><td>dem Herrn</td><td>des Herrn</td><td>${audBtn('der Herr, den Herrn')}</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"After 'der' (masculine nominative), adjective ending?",opts:["-e","-er","-es","-en"],ans:0,exp:"After a definite article (der), the case is already shown — adjective relaxes to weak -e. Der groß-e Mann."},
+    {q:"After 'ein' (masculine nominative), adjective ending?",opts:["-er","-e","-es","-en"],ans:0,exp:"After 'ein' (no ending in masc. nom.), adjective takes the strong ending that shows masculinity: -er. Ein groß-er Mann."},
+    {q:"'Die schön___ Frau' (nominative feminine)",opts:["-e","-er","-es","-en"],ans:0,exp:"After die (definite feminine nominative), weak -e. Die schön-e Frau."},
+    {q:"'Ein alt___ Buch' (neuter nominative)",opts:["-es","-er","-e","-en"],ans:0,exp:"After 'ein' (neuter nom., no ending), adjective takes strong ending for neuter: -es. Ein alt-es Buch."},
+    {q:"Adjective ending in dative after 'dem'?",opts:["-en","-e","-er","-es"],ans:0,exp:"Dative adjectives almost always end in -en regardless of article type. Dem gut-en Mann."},
+    {q:"Comparative of 'schnell':",opts:["schneller","schneller als","am schnellsten","schnells"],ans:0,exp:"Add -er to form the comparative. schnell → schneller. Then use 'als' for 'than': Er läuft schneller als ich."},
+    {q:"Superlative predicate form of 'schnell':",opts:["am schnellsten","am schnells","das schnellste","schnellsten"],ans:0,exp:"Predicate superlative: am + adjective + -sten. schnell → am schnellsten. (attributive: das schnellste Auto)"},
+    {q:"'Mein Auto ist größer ___ deins.' (than)",opts:["als","wie","denn","so"],ans:0,exp:"Use 'als' for comparisons of difference (bigger THAN, faster THAN). 'Wie' is for equality comparisons."},
+    {q:"Comparative of 'gut':",opts:["besser","guter","gut mehr","guterer"],ans:0,exp:"gut is irregular: gut → besser → am besten. Memorize these three irregulars: gut/besser/best, viel/mehr/meist, gern/lieber/liebst."},
+    {q:"Superlative of 'viel':",opts:["am meisten","am vielen","am vielsten","mehr"],ans:0,exp:"viel is irregular: viel → mehr → am meisten. Das ist das Meiste = That is the most."},
+    {q:"Comparative of 'hoch':",opts:["höher","hocher","am höchsten","mehr hoch"],ans:0,exp:"hoch is irregular: hoch → höher (umlaut!) → am höchsten."},
+    {q:"Accusative of 'der Student' (weak masculine):",opts:["den Studenten","den Student","dem Studenten","des Studenten"],ans:0,exp:"Weak masculine nouns add -en in ALL cases except nominative singular. Accusative: den Studenten."},
+    {q:"Dative of 'der Name' (weak masculine, special):",opts:["dem Namen","dem Name","den Namen","des Namens"],ans:0,exp:"der Name follows weak masculine pattern: dem Namen in dative. BUT genitive is special: des NAMENS (adds -ns, not -ens)."},
+    {q:"Genitive of 'der Name' (special form):",opts:["des Namens","des Namen","des Name","dem Namen"],ans:0,exp:"der Name has a special genitive: des Namens (adds -ns). Not des Namen. This is irregular within the n-declension."},
+    {q:"'Eine gut___ Idee' (nominative feminine)",opts:["-e","-er","-es","-en"],ans:0,exp:"After 'eine' (feminine, has a clear -e ending), adjective takes weak -e. Eine gut-e Idee."},
+    {q:"What comparison word means 'as... as' (equality)?",opts:["als","wie (in so...wie)","denn","mehr"],ans:1,exp:"Equality comparison: so + adjective + wie. Sie ist so groß wie er. 'Als' is for difference (bigger THAN)."},
+    {q:"'Ich kenne den Studenten.' — Why 'Studenten' not 'Student'?",opts:["It's genitive","Student is a weak masculine noun — adds -en in all cases except nominative","It's dative","Random rule"],ans:1,exp:"der Student is a weak masculine noun (n-declension). These nouns add -en (or -n) in ALL cases except nominative singular: den Studenten (acc), dem Studenten (dat)."},
+    {q:"'Der groß___ Mann schläft.' (nominative after definite article)",opts:["-e","-er","-es","-en"],ans:0,exp:"After 'der' (definite masculine nominative), weak ending -e. Der groß-e Mann."},
+    {q:"Superlative of 'gern':",opts:["am liebsten","am gernsten","am lieblichsten","lieber"],ans:0,exp:"gern is irregular: gern → lieber → am liebsten. Ich esse am liebsten Pizza = I like eating pizza most."},
+    {q:"Adjective ending after 'kein' (masc. nominative)?",opts:["-er","-e","-es","-en"],ans:0,exp:"kein follows the same pattern as ein. Masculine nominative after kein: -er (strong ending). Kein gut-er Mann."}
+  ],
+  dissections:[
+    {sent:"Der große Mann schläft.",en:"The tall man sleeps.",words:[
+      {w:"Der",role:"Article",case:"nom",why:"Masculine nominative definite article. Der Mann is the subject."},
+      {w:"große",role:"Adjective (Weak)",case:"nom",why:"After der (definite article, case already shown), adjective takes WEAK ending -e. der groß-e Mann."},
+      {w:"Mann",role:"Noun — Subject",case:"nom",why:"Nominative. The doer sleeping."},
+      {w:"schläft",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of schlafen."}
+    ]},
+    {sent:"Ein großer Mann schläft.",en:"A tall man sleeps.",words:[
+      {w:"Ein",role:"Article",case:"nom",why:"Masculine nominative indefinite article. But 'ein' has NO ending in masc. nom. — it cannot signal masculinity."},
+      {w:"großer",role:"Adjective (Strong)",case:"nom",why:"After 'ein' (no ending), adjective takes STRONG ending -er to signal masculine nominative. The adjective steps up to carry the case signal."},
+      {w:"Mann",role:"Noun — Subject",case:"nom",why:"Nominative. The doer sleeping."},
+      {w:"schläft",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of schlafen."}
+    ]},
+    {sent:"Ich kenne den Studenten.",en:"I know the student.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular. The doer."},
+      {w:"kenne",role:"Verb",case:"verb",why:"Position 2. 1st person singular of kennen."},
+      {w:"den",role:"Article",case:"acc",why:"Masculine accusative definite article: der→den."},
+      {w:"Studenten",role:"Noun — Weak Masculine",case:"acc",why:"Student is a weak masculine noun (n-declension). It adds -en in ALL cases except nominative singular. Accusative: den Studenten."}
+    ]},
+    {sent:"Er läuft schneller als ich.",en:"He runs faster than I do.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"Nominative. 3rd person singular masculine."},
+      {w:"läuft",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of laufen."},
+      {w:"schneller",role:"Adjective (Comparative)",case:"other",why:"Comparative of schnell: add -er. schnell→schneller. Predicate comparative — no case ending needed after the verb."},
+      {w:"als",role:"Comparative Conjunction",case:"other",why:"als = than. Used for comparisons of DIFFERENCE. (Use 'wie' for comparisons of equality: so groß wie.)"},
+      {w:"ich",role:"Pronoun",case:"nom",why:"Nominative — comparing subject to subject. He is faster than I [am]."}
+    ]},
+    {sent:"Das schnellste Auto ist teuer.",en:"The fastest car is expensive.",words:[
+      {w:"Das",role:"Article",case:"nom",why:"Neuter nominative definite article. Das Auto is the subject."},
+      {w:"schnellste",role:"Adjective (Superlative, Attributive)",case:"nom",why:"Superlative of schnell: schnellst-. Attributive superlative before noun after definite article → weak ending -e. das schnellst-e Auto."},
+      {w:"Auto",role:"Noun — Subject",case:"nom",why:"Neuter nominative. The subject."},
+      {w:"ist",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of sein."},
+      {w:"teuer",role:"Adjective (Predicate)",case:"other",why:"Predicate adjective after sein. No case ending needed."}
+    ]},
+    {sent:"Dem kranken Kind gebe ich das Buch.",en:"I give the sick child the book.",words:[
+      {w:"Dem",role:"Article",case:"dat",why:"Neuter dative definite article: das→dem. dem Kind is the indirect object (recipient)."},
+      {w:"kranken",role:"Adjective (Weak, Dative)",case:"dat",why:"Dative adjective after definite article → ALWAYS -en. dem krank-en Kind. (B2 rule: dative adjectives almost always end in -en.)"},
+      {w:"Kind",role:"Noun — Indirect Object",case:"dat",why:"Neuter dative. Target/recipient of the giving. Fronted to position 1 for emphasis."},
+      {w:"gebe",role:"Verb",case:"verb",why:"Position 2. V2 rule — the dative phrase occupies position 1."},
+      {w:"ich",role:"Pronoun — Subject",case:"nom",why:"Nominative at position 3 — pushed back by the fronted dative object."},
+      {w:"das",role:"Article",case:"acc",why:"Neuter accusative article. das Buch = direct object (the thing given)."},
+      {w:"Buch",role:"Noun — Direct Object",case:"acc",why:"Neuter accusative. Receiver."}
+    ]}
+  ]
+},
+{
+  id:5, title:"Modal Verbs, Perfekt & Separable Verbs",
+  subtitle:"6 Modals · haben/sein · Participles · Prefix Jump · Futur I · Reflexive",
+  tags:["MODALS","PERFEKT","HABEN/SEIN","SEPARABLE VERBS","FUTUR I","REFLEXIVE"],
+  lessonHTML:`
+    <h3>THE 6 MODAL VERBS</h3>
+    <p>Modals go in position 2. The main verb (infinitive) goes to the END.</p>
+    <table class="gtable">
+      <tr><th>MODAL</th><th>MEANING</th><th>ich</th><th>du</th><th>er/sie</th><th>AUDIO</th></tr>
+      <tr><td class="hl">können</td><td>can / able to</td><td>kann</td><td>kannst</td><td>kann</td><td>${audBtn('Ich kann Deutsch sprechen.')}</td></tr>
+      <tr><td class="hl">müssen</td><td>must / have to</td><td>muss</td><td>musst</td><td>muss</td><td>${audBtn('Du musst jetzt schlafen.')}</td></tr>
+      <tr><td class="hl">wollen</td><td>want to</td><td>will</td><td>willst</td><td>will</td><td>${audBtn('Er will ein Buch lesen.')}</td></tr>
+      <tr><td class="hl">sollen</td><td>should / supposed to</td><td>soll</td><td>sollst</td><td>soll</td><td>${audBtn('Ich soll pünktlich sein.')}</td></tr>
+      <tr><td class="hl">dürfen</td><td>may / allowed to</td><td>darf</td><td>darfst</td><td>darf</td><td>${audBtn('Darf ich gehen?')}</td></tr>
+      <tr><td class="hl">möchten</td><td>would like to</td><td>möchte</td><td>möchtest</td><td>möchte</td><td>${audBtn('Ich möchte Kaffee.')}</td></tr>
+    </table>
+    <div class="why-box"><p>Modals were once full verbs that took an infinitive complement. As they grammaticalized, the infinitive stayed frozen at the end. 'Ich kann schwimmen' literally meant 'I have the ability, [which is] to swim.'</p></div>
+    <h3>PERFEKT — THE SPOKEN PAST</h3>
+    <p>Formula: <strong style="color:var(--gold)">haben</strong> or <strong style="color:var(--green)">sein</strong> + past participle (participle at the END).</p>
+    <table class="gtable">
+      <tr><th>USE HABEN</th><th>USE SEIN</th></tr>
+      <tr><td>Most verbs — transitive, non-movement</td><td>Movement from A to B (gehen, fahren, kommen, fliegen, laufen, reisen)</td></tr>
+      <tr><td>Ich <strong style="color:var(--gold)">habe</strong> Deutsch gelernt. ${audBtn('Ich habe Deutsch gelernt.')}</td><td>Change of state (aufwachen, einschlafen, sterben, wachsen, werden)</td></tr>
+      <tr><td>Er <strong style="color:var(--gold)">hat</strong> das Buch gelesen. ${audBtn('Er hat das Buch gelesen.')}</td><td>Ich <strong style="color:var(--green)">bin</strong> nach Hause gegangen. ${audBtn('Ich bin nach Hause gegangen.')}</td></tr>
+    </table>
+    <p><strong>Participle formation:</strong> ge- + stem + -t (regular) or irregular form.<br>
+    Verbs starting with <strong>be-, ver-, er-, ent-, emp-, zer-</strong> → NO ge-: besucht, verstanden, erklärt.<br>
+    Separable verbs: ge- goes BETWEEN prefix and stem: auf<strong>ge</strong>standen, an<strong>ge</strong>rufen.</p>
+    <h3>SEPARABLE VERBS</h3>
+    <p>The prefix jumps to the END of the main clause in present tense.</p>
+    <table class="gtable">
+      <tr><th>INFINITIVE</th><th>PRESENT</th><th>PERFEKT</th><th>WITH MODAL</th><th>AUDIO</th></tr>
+      <tr><td>anrufen</td><td>Ich ruf-e dich an.</td><td>Ich habe dich an-ge-rufen.</td><td>Ich muss dich anrufen.</td><td>${audBtn('Ich rufe dich an. Ich habe dich angerufen.')}</td></tr>
+      <tr><td>aufstehen</td><td>Ich steh-e um 7 auf.</td><td>Ich bin um 7 auf-ge-standen.</td><td>Ich muss früh aufstehen.</td><td>${audBtn('Ich stehe um sieben auf. Ich bin um sieben aufgestanden.')}</td></tr>
+      <tr><td>einschlafen</td><td>Er schläf-t ein.</td><td>Er ist ein-ge-schlafen.</td><td>Er kann nicht einschlafen.</td><td>${audBtn('Er schläft ein. Er ist eingeschlafen.')}</td></tr>
+    </table>
+    <h3>FUTUR I</h3>
+    <p>${audBtn('Ich werde morgen Deutsch lernen.')} werden (position 2) + infinitive (at END). Ich <strong>werde</strong> morgen Deutsch <strong>lernen</strong>.</p>
+    <p>In spoken German, present tense + time adverb often replaces Futur I: <em>Morgen lerne ich Deutsch.</em> ${audBtn('Morgen lerne ich Deutsch.')}</p>
+    <h3>REFLEXIVE VERBS</h3>
+    <p>Accusative reflexive (mich/dich/sich etc.) when the verb has no other accusative object. Dative reflexive (mir/dir/sich etc.) when there IS an accusative object.</p>
+    <table class="gtable">
+      <tr><th>ACCUSATIVE REFLEXIVE</th><th>DATIVE REFLEXIVE</th></tr>
+      <tr><td>Ich wasche <strong>mich</strong>. ${audBtn('Ich wasche mich.')}</td><td>Ich wasche <strong>mir</strong> die Hände. ${audBtn('Ich wasche mir die Hände.')}</td></tr>
+      <tr><td>Er erinnert <strong>sich</strong> an den Termin. ${audBtn('Er erinnert sich an den Termin.')}</td><td>Sie putzt <strong>sich</strong> die Zähne. ${audBtn('Sie putzt sich die Zähne.')}</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"Where does the main verb go with a modal?",opts:["Position 2","The very end of the clause","Position 1","Before the modal"],ans:1,exp:"Modal verb goes to position 2. The main verb (infinitive) goes to the very END. Ich kann Deutsch sprechen."},
+    {q:"'Ich ___ Deutsch sprechen.' (can)",opts:["kann","könnte","könnt","konnte"],ans:0,exp:"können, 1st person singular: ich KANN. Ich kann Deutsch sprechen."},
+    {q:"'Du ___ jetzt schlafen.' (must)",opts:["muss","musst","müssen","müsst"],ans:1,exp:"müssen, 2nd person singular: du MUSST. Du musst jetzt schlafen."},
+    {q:"Perfekt of 'lernen' — haben or sein?",opts:["haben","sein"],ans:0,exp:"lernen is not a movement or state-change verb. Uses haben. Ich habe Deutsch gelernt."},
+    {q:"Perfekt of 'gehen' — haben or sein?",opts:["haben","sein"],ans:1,exp:"gehen = movement from A to B. Movement verbs use sein. Ich bin gegangen."},
+    {q:"Where does the prefix of 'anrufen' go in present tense?",opts:["It stays attached","To the very END","Position 2","Before the object"],ans:1,exp:"Separable prefixes jump to the END. Ich rufe dich AN. (anrufen → ruf-e...an)"},
+    {q:"'Ich stehe um 7 Uhr ___.' (auf) — Present of aufstehen",opts:["auf","aufstehe","stehe auf","aufstehen"],ans:0,exp:"Prefix goes to the end. Verb stem at position 2: stehe. Prefix auf at the end. Ich stehe um 7 Uhr auf."},
+    {q:"Perfekt of 'aufstehen': 'Ich ___ um 7 ___.'",audio:"Ich bin um sieben aufgestanden.",opts:["habe...aufgestanden","bin...aufgestanden","bin...aufstehen","habe...aufgestehen"],ans:1,exp:"aufstehen = state change → uses sein. Separable participle: auf-ge-standen (ge- between prefix and stem)."},
+    {q:"Past participle of 'besuchen':",opts:["besucht","gebesucht","besuchet","besuchen"],ans:0,exp:"Verbs starting with be-, ver-, er- etc. do NOT add ge- in the participle. besuchen → besucht."},
+    {q:"'Wir ___ nach Berlin ___.' (fahren, Perfekt)",audio:"Wir sind nach Berlin gefahren.",opts:["haben...gefahren","sind...gefahren","sind...fahren","haben...fahren"],ans:1,exp:"fahren = movement A→B → uses sein. Wir sind. Participle: gefahren. Wir sind nach Berlin gefahren."},
+    {q:"'___ du schon ___?' (einschlafen, Perfekt)",audio:"Bist du schon eingeschlafen?",opts:["Hast...eingeschlafen","Bist...eingeschlafen","Bist...einschlafen","Hast...einschlafen"],ans:1,exp:"einschlafen = change of state → sein. du → bist. Separable participle: ein-ge-schlafen."},
+    {q:"'Ich ___ dich gestern ___.' (anrufen, Perfekt)",audio:"Ich habe dich gestern angerufen.",opts:["habe...angerufen","bin...angerufen","habe...rufen","habe...gerufen"],ans:0,exp:"anrufen uses haben. Separable participle: an-ge-rufen (ge- between prefix an and stem ruf)."},
+    {q:"Reflexive pronoun for 'ich' (accusative):",opts:["mir","mich","sich","uns"],ans:1,exp:"Accusative reflexive: ich→mich. Ich wasche mich. (washing myself — no other accusative object)"},
+    {q:"'Ich wasche ___ die Hände.' (sich/mir — with accusative object 'die Hände')",audio:"Ich wasche mir die Hände.",opts:["mich","mir","sich","uns"],ans:1,exp:"'die Hände' is the accusative object. Therefore the reflexive shifts to DATIVE: ich→mir. Ich wasche mir die Hände."},
+    {q:"Futur I formula:",opts:["sein + Partizip II","werden + Infinitiv (at end)","haben + Infinitiv","Modal + Partizip"],ans:1,exp:"Futur I: werden (position 2) + infinitive (at end). Ich werde morgen kommen."},
+    {q:"'Es ___ morgen regnen.' (werden, 3rd singular Futur I)",audio:"Es wird morgen regnen.",opts:["wird","werde","werden","wurde"],ans:0,exp:"werden, 3rd person singular: er/sie/es WIRD. Es wird morgen regnen."},
+    {q:"'Er ___ sich an den Termin.' (erinnern + an — which preposition?)",audio:"Er erinnert sich an den Termin.",opts:["an","auf","von","über"],ans:0,exp:"sich erinnern an (+ accusative) = to remember. The preposition is 'an' with accusative."},
+    {q:"Modal + separable verb: 'Ich muss früh ___.' (aufstehen)",audio:"Ich muss früh aufstehen.",opts:["aufstehe","stehe...auf","aufstehen","stehen auf"],ans:2,exp:"With a modal, the WHOLE separable verb stays together as an infinitive at the end. Ich muss früh aufstehen."},
+    {q:"Past participle of 'verstehen':",opts:["verstanden","geverstanden","verstandig","versteht"],ans:0,exp:"verstehen starts with ver- → no ge- prefix. The stem changes irregularly: versteh→verstand. Participle: verstanden."},
+    {q:"'Sie ___ sich erkältet.' (haben — reflexive Perfekt)",audio:"Sie hat sich erkältet.",opts:["hat","ist","haben","sind"],ans:0,exp:"sich erkälten uses haben. 3rd singular: hat. Reflexive sich stays in the middle. Sie hat sich erkältet."}
+  ],
+  dissections:[
+    {sent:"Ich habe gestern Deutsch gelernt.",en:"I learned German yesterday.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular. The doer."},
+      {w:"habe",role:"Auxiliary (haben)",case:"verb",why:"Position 2. Perfekt auxiliary. lernen uses haben (not a movement/state-change verb)."},
+      {w:"gestern",role:"Adverb",case:"other",why:"Time adverb. In Perfekt, adverbs sit between the auxiliary and the participle."},
+      {w:"Deutsch",role:"Noun — Direct Object",case:"acc",why:"Accusative. The thing being learned. Neuter accusative = same as nominative."},
+      {w:"gelernt",role:"Participle",case:"verb",why:"Past participle at the END. ge- + lern + -t (regular). lernen → ge+lern+t = gelernt."}
+    ]},
+    {sent:"Ich bin nach Hause gegangen.",en:"I went home.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular."},
+      {w:"bin",role:"Auxiliary (sein)",case:"verb",why:"Position 2. Perfekt auxiliary. gehen uses SEIN because it expresses movement from A to B."},
+      {w:"nach",role:"Dative Preposition",case:"dat",why:"nach is a dative preposition. nach Hause = toward home (direction). nach Hause is a fixed dative expression."},
+      {w:"Hause",role:"Noun — Dative",case:"dat",why:"Dative of das Haus. Fixed expression: nach Hause = (going) home."},
+      {w:"gegangen",role:"Participle",case:"verb",why:"Past participle of gehen at the END. Irregular: geh→gang. ge+gang+en = gegangen."}
+    ]},
+    {sent:"Ich rufe dich morgen an.",en:"I'll call you tomorrow.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular."},
+      {w:"rufe",role:"Verb Stem",case:"verb",why:"Position 2. anrufen is a separable verb. The stem 'ruf-e' sits at position 2; the prefix 'an' jumps to the end."},
+      {w:"dich",role:"Pronoun — Direct Object",case:"acc",why:"dich = accusative of du. anrufen takes a direct accusative object."},
+      {w:"morgen",role:"Adverb",case:"other",why:"Time adverb. Sits before the prefix at the end of the clause."},
+      {w:"an",role:"Separable Prefix",case:"other",why:"The prefix of anrufen jumps to the VERY END of the clause in present tense. This is the separable verb rule."}
+    ]},
+    {sent:"Er hat sich das Bein gebrochen.",en:"He broke his leg.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"Nominative. 3rd person singular masculine."},
+      {w:"hat",role:"Auxiliary (haben)",case:"verb",why:"Position 2. brechen uses haben (transitive, not movement)."},
+      {w:"sich",role:"Reflexive Pronoun (Dative)",case:"dat",why:"DATIVE reflexive because 'das Bein' is the accusative object. When there's another accusative, reflexive shifts to dative: er→sich (dative 3rd person)."},
+      {w:"das",role:"Article",case:"acc",why:"Neuter accusative article. das Bein is the direct object (the thing broken)."},
+      {w:"Bein",role:"Noun — Direct Object",case:"acc",why:"Accusative. The thing being broken. Neuter: das Bein."},
+      {w:"gebrochen",role:"Participle",case:"verb",why:"Past participle of brechen at the END. Irregular strong verb: brech→broch→gebrochen."}
+    ]},
+    {sent:"Ich werde morgen früh aufstehen.",en:"I will get up early tomorrow.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular."},
+      {w:"werde",role:"Auxiliary (werden — Futur I)",case:"verb",why:"Position 2. werden is the Futur I auxiliary. 1st person singular of werden."},
+      {w:"morgen",role:"Adverb",case:"other",why:"Time adverb = tomorrow."},
+      {w:"früh",role:"Adverb",case:"other",why:"früh = early. Manner adverb."},
+      {w:"aufstehen",role:"Infinitive (Separable) — Verb-Final",case:"verb",why:"With modal/werden, the WHOLE separable verb stays together as an infinitive at the END. aufstehen (not: stehen...auf)."}
+    ]},
+    {sent:"Kannst du mir helfen?",en:"Can you help me?",words:[
+      {w:"Kannst",role:"Modal Verb",case:"verb",why:"Position 1 — yes/no question. 2nd person singular of können. Modal sends main verb to end."},
+      {w:"du",role:"Pronoun — Subject",case:"nom",why:"Nominative subject at position 2 in the question structure."},
+      {w:"mir",role:"Pronoun — Dative Object",case:"dat",why:"mir = dative of ich. helfen is a dative trigger verb — forces its object into dative."},
+      {w:"helfen",role:"Verb (Infinitive) — Verb-Final",case:"verb",why:"Main verb infinitive at the END — pushed there by the modal kannst."}
+    ]}
+  ]
+},
+{
+  id:6, title:"Two-Way Prepositions, Prepositional Verbs & Zu-Clauses",
+  subtitle:"Wechselpräpositionen · Fixed Verb+Prep Combos · um...zu · ohne...zu",
+  tags:["TWO-WAY PREPS","PREPOSITIONAL VERBS","ZU-CLAUSES","WECHSELPRÄPOSITIONEN"],
+  lessonHTML:`
+    <h3>TWO-WAY PREPOSITIONS (Wechselpräpositionen)</h3>
+    <p>These 9 prepositions take <strong style="color:var(--gold)">accusative</strong> for direction/movement toward (Wohin?) and <strong style="color:var(--green)">dative</strong> for static location (Wo?).</p>
+    <div class="trig-list">
+      <span class="tw" onclick="speak(this.textContent,this)">in</span>
+      <span class="tw" onclick="speak(this.textContent,this)">an</span>
+      <span class="tw" onclick="speak(this.textContent,this)">auf</span>
+      <span class="tw" onclick="speak(this.textContent,this)">unter</span>
+      <span class="tw" onclick="speak(this.textContent,this)">über</span>
+      <span class="tw" onclick="speak(this.textContent,this)">vor</span>
+      <span class="tw" onclick="speak(this.textContent,this)">hinter</span>
+      <span class="tw" onclick="speak(this.textContent,this)">neben</span>
+      <span class="tw" onclick="speak(this.textContent,this)">zwischen</span>
+    </div>
+    <table class="gtable">
+      <tr><th>DIRECTION (Wohin? → Accusative)</th><th>LOCATION (Wo? → Dative)</th><th>AUDIO</th></tr>
+      <tr><td>Ich gehe in den Park.</td><td>Ich bin in dem Park. (im Park)</td><td>${audBtn('Ich gehe in den Park. Ich bin im Park.')}</td></tr>
+      <tr><td>Er hängt das Bild an die Wand.</td><td>Das Bild hängt an der Wand.</td><td>${audBtn('Er hängt das Bild an die Wand. Das Bild hängt an der Wand.')}</td></tr>
+      <tr><td>Sie legt das Buch auf den Tisch.</td><td>Das Buch liegt auf dem Tisch.</td><td>${audBtn('Sie legt das Buch auf den Tisch. Das Buch liegt auf dem Tisch.')}</td></tr>
+      <tr><td>Die Katze springt auf den Tisch.</td><td>Die Katze schläft auf dem Tisch.</td><td>${audBtn('Die Katze springt auf den Tisch. Die Katze schläft auf dem Tisch.')}</td></tr>
+    </table>
+    <div class="why-box"><p>The accusative originally marked a goal of motion in Proto-Indo-European. The dative marked location. As case endings eroded, the prepositions retained both uses, and the article became the sole marker of the distinction.</p></div>
+    <h3>PREPOSITIONAL VERBS (Fixed Combos — memorize as units)</h3>
+    <table class="gtable">
+      <tr><th>VERB + PREP</th><th>CASE</th><th>MEANING</th><th>EXAMPLE + AUDIO</th></tr>
+      <tr><td>warten auf</td><td>+Akk</td><td>to wait for</td><td>${audBtn('Ich warte auf den Bus.')} Ich warte auf den Bus.</td></tr>
+      <tr><td>sich freuen auf</td><td>+Akk</td><td>to look forward to</td><td>${audBtn('Ich freue mich auf das Wochenende.')} auf das Wochenende.</td></tr>
+      <tr><td>sich interessieren für</td><td>+Akk</td><td>to be interested in</td><td>${audBtn('Ich interessiere mich für Musik.')} für Musik.</td></tr>
+      <tr><td>denken an</td><td>+Akk</td><td>to think of/about</td><td>${audBtn('Ich denke an dich.')} Ich denke an dich.</td></tr>
+      <tr><td>sprechen über</td><td>+Akk</td><td>to talk about</td><td>${audBtn('Wir sprechen über das Problem.')} über das Problem.</td></tr>
+      <tr><td>sich erinnern an</td><td>+Akk</td><td>to remember</td><td>${audBtn('Er erinnert sich an den Termin.')} an den Termin.</td></tr>
+      <tr><td>Angst haben vor</td><td>+Dat</td><td>to be afraid of</td><td>${audBtn('Sie hat Angst vor dem Hund.')} vor dem Hund.</td></tr>
+      <tr><td>träumen von</td><td>+Dat</td><td>to dream of</td><td>${audBtn('Er träumt von einer Weltreise.')} von einer Weltreise.</td></tr>
+      <tr><td>fahren mit</td><td>+Dat</td><td>to go by (transport)</td><td>${audBtn('Ich fahre mit dem Zug.')} mit dem Zug.</td></tr>
+    </table>
+    <h3>ZU-CLAUSES (Infinitive Clauses)</h3>
+    <p>zu + infinitive goes to the END of the clause. With separable verbs: zu goes BETWEEN prefix and stem (aufzustehen, anzurufen).</p>
+    <table class="gtable">
+      <tr><th>PATTERN</th><th>MEANING</th><th>EXAMPLE</th><th>AUDIO</th></tr>
+      <tr><td>Verb + zu + Infinitiv</td><td>to do something</td><td>Ich versuche, Deutsch zu lernen.</td><td>${audBtn('Ich versuche, Deutsch zu lernen.')}</td></tr>
+      <tr><td>um ... zu</td><td>in order to</td><td>Ich lerne viel, um die Prüfung zu bestehen.</td><td>${audBtn('Ich lerne viel, um die Prüfung zu bestehen.')}</td></tr>
+      <tr><td>ohne ... zu</td><td>without doing</td><td>Er ging, ohne sich zu verabschieden.</td><td>${audBtn('Er ging, ohne sich zu verabschieden.')}</td></tr>
+      <tr><td>(an)statt ... zu</td><td>instead of doing</td><td>Anstatt zu arbeiten, spielt er.</td><td>${audBtn('Anstatt zu arbeiten, spielt er.')}</td></tr>
+      <tr><td>Separable: zu between</td><td>—</td><td>Ich versuche, früh aufzustehen.</td><td>${audBtn('Ich versuche, früh aufzustehen.')}</td></tr>
+    </table>
+  `,
+  drills:[
+    {q:"'Ich gehe ___ die Stadt.' (into — direction)",opts:["in der","in die","in dem","in das"],ans:1,exp:"Direction → accusative. 'in die' because Stadt is feminine (die Stadt). Accusative feminine = die."},
+    {q:"'Ich bin ___ der Stadt.' (in — location)",opts:["in der","in die","in dem","in das"],ans:0,exp:"Location → dative. 'in der' because Stadt is feminine. Dative feminine die→der."},
+    {q:"Two-way prepositions take accusative for:",opts:["Location (Wo?)","Direction (Wohin?)","Always accusative","Depends on gender"],ans:1,exp:"Direction/movement toward = accusative (Wohin?). Static location = dative (Wo?)."},
+    {q:"'Das Bild hängt ___ der Wand.' (on the wall — location)",opts:["an der","an die","an dem","an das"],ans:0,exp:"Location → dative. 'an der' because Wand is feminine. Dative feminine die→der."},
+    {q:"'Wir warten ___ den Bus.' (for — prepositional verb)",audio:"Wir warten auf den Bus.",opts:["auf","für","an","von"],ans:0,exp:"warten auf (+ accusative) = to wait for. Fixed prepositional verb — memorize the preposition."},
+    {q:"'Sie freut sich ___ das Wochenende.' (looks forward to)",audio:"Sie freut sich auf das Wochenende.",opts:["auf","über","für","an"],ans:0,exp:"sich freuen auf (+ accusative) = to look forward to. Fixed combo."},
+    {q:"'Angst haben vor' takes which case?",opts:["Accusative","Dative","Genitive"],ans:1,exp:"Angst haben vor (+ dative) = to be afraid of. vor is normally a two-way preposition, but in this fixed expression it always takes dative."},
+    {q:"'träumen von' takes which case?",opts:["Accusative","Dative","Genitive"],ans:1,exp:"träumen von (+ dative) = to dream of. von is a dative-only preposition."},
+    {q:"'Die Katze springt ___ den Tisch.' (onto — direction)",audio:"Die Katze springt auf den Tisch.",opts:["auf dem","auf den","auf die","auf das"],ans:1,exp:"Direction/movement → accusative. Tisch is masculine: der→den in accusative."},
+    {q:"'Die Katze schläft ___ dem Tisch.' (on — location)",audio:"Die Katze schläft auf dem Tisch.",opts:["auf dem","auf den","auf die","auf das"],ans:0,exp:"Location → dative. Tisch is masculine: der→dem in dative. auf dem Tisch."},
+    {q:"'Der Mann, ___ dort steht, ist mein Vater.' (relative masc. nom.)",audio:"Der Mann, der dort steht, ist mein Vater.",opts:["der","den","dem","dessen"],ans:0,exp:"Relative pronoun: masculine (Mann) + nominative (Mann is subject inside clause, er steht) = der."},
+    {q:"'Das Kind, ___ ich helfe, lacht.' (relative neut. dat.)",audio:"Das Kind, dem ich helfe, lacht.",opts:["das","dem","den","dessen"],ans:1,exp:"helfen triggers dative. The child is helped = dative. Neuter dative = dem."},
+    {q:"'Ich versuche, Deutsch ___ lernen.' (zu-clause)",audio:"Ich versuche, Deutsch zu lernen.",opts:["zu","um zu","ohne","mit"],ans:0,exp:"After versuchen, an infinitive clause uses simple zu + infinitive. zu lernen."},
+    {q:"'Um besser ___ schlafen, trinkt sie Tee.' (zu)",audio:"Um besser zu schlafen, trinkt sie Tee.",opts:["zu","zum","für","ohne zu"],ans:0,exp:"um...zu = in order to. um besser zu schlafen = in order to sleep better."},
+    {q:"With separable verbs, where does 'zu' go in an infinitive clause?",opts:["Before the prefix","Between prefix and stem","After the whole verb","Separate word after comma"],ans:1,exp:"zu goes BETWEEN prefix and stem: auf+zu+stehen = aufzustehen. Ich versuche, früh aufzustehen."},
+    {q:"'Er ging, ohne sich ___ verabschieden.' (zu)",audio:"Er ging, ohne sich zu verabschieden.",opts:["zu","zum","für","ohne"],ans:0,exp:"ohne...zu = without doing. ohne sich zu verabschieden = without saying goodbye."},
+    {q:"'Sie spricht ___ ihren Job.' (about — prepositional verb)",audio:"Sie spricht über ihren Job.",opts:["über","von","an","mit"],ans:0,exp:"sprechen über (+ accusative) = to talk about. Fixed prepositional verb."},
+    {q:"'Er träumt ___ einer Weltreise.' (of)",audio:"Er träumt von einer Weltreise.",opts:["von","über","an","auf"],ans:0,exp:"träumen von (+ dative) = to dream of. einer Weltreise = dative feminine (eine→einer)."},
+    {q:"'Ich denke ___ dich.' (think of)",audio:"Ich denke an dich.",opts:["an","auf","über","von"],ans:0,exp:"denken an (+ accusative) = to think of. Ich denke an dich. (dich = accusative of du)"},
+    {q:"'Ich interessiere mich ___ Musik.' (interested in)",audio:"Ich interessiere mich für Musik.",opts:["für","auf","an","von"],ans:0,exp:"sich interessieren für (+ accusative) = to be interested in. Fixed prepositional verb."}
+  ],
+  dissections:[
+    {sent:"Ich warte auf den Bus.",en:"I am waiting for the bus.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular."},
+      {w:"warte",role:"Verb",case:"verb",why:"Position 2. 1st person singular of warten. warten auf is a fixed prepositional verb."},
+      {w:"auf",role:"Preposition (Fixed Combo)",case:"acc",why:"warten auf (+ accusative) = to wait for. auf forces accusative in this fixed expression."},
+      {w:"den",role:"Article",case:"acc",why:"Masculine accusative: der→den. Bus is masculine (der Bus)."},
+      {w:"Bus",role:"Noun — Accusative Object",case:"acc",why:"Masculine accusative. Forced by the prepositional verb warten auf."}
+    ]},
+    {sent:"Sie hat Angst vor dem Hund.",en:"She is afraid of the dog.",words:[
+      {w:"Sie",role:"Pronoun — Subject",case:"nom",why:"Nominative. 3rd person singular feminine."},
+      {w:"hat",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of haben. Angst haben vor = to be afraid of."},
+      {w:"Angst",role:"Noun",case:"acc",why:"Direct object of haben. Angst is feminine: Angst haben (not: eine Angst haben — no article in this expression)."},
+      {w:"vor",role:"Preposition (Fixed Combo)",case:"dat",why:"Angst haben vor (+ dative) = to be afraid of. vor normally is two-way, but in this fixed expression takes dative."},
+      {w:"dem",role:"Article",case:"dat",why:"Masculine dative: der→dem. Hund is masculine (der Hund)."},
+      {w:"Hund",role:"Noun — Dative Object",case:"dat",why:"Masculine dative. Forced by Angst haben vor."}
+    ]},
+    {sent:"Ich versuche, früh aufzustehen.",en:"I try to get up early.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. 1st person singular."},
+      {w:"versuche",role:"Verb",case:"verb",why:"Position 2. 1st person singular of versuchen. Triggers an infinitive clause with zu."},
+      {w:"früh",role:"Adverb",case:"other",why:"früh = early. Adverb inside the infinitive clause."},
+      {w:"aufzustehen",role:"Separable Infinitive with zu",case:"verb",why:"aufstehen is separable. zu goes BETWEEN prefix and stem: auf+zu+stehen = aufzustehen. Infinitive at end of zu-clause."}
+    ]},
+    {sent:"Ich lerne viel, um die Prüfung zu bestehen.",en:"I study a lot in order to pass the exam.",words:[
+      {w:"Ich",role:"Pronoun — Subject",case:"nom",why:"Nominative. Subject of the main clause."},
+      {w:"lerne",role:"Verb",case:"verb",why:"Position 2. Main clause verb."},
+      {w:"viel",role:"Adverb",case:"other",why:"viel = a lot. Manner adverb."},
+      {w:"um",role:"Purpose Conjunction",case:"other",why:"um...zu = in order to. Introduces a purpose infinitive clause."},
+      {w:"die",role:"Article",case:"acc",why:"Feminine accusative article. die Prüfung is the object inside the purpose clause."},
+      {w:"Prüfung",role:"Noun — Direct Object",case:"acc",why:"Feminine accusative. The thing being passed."},
+      {w:"zu",role:"Infinitive Marker",case:"other",why:"The zu of um...zu. Goes immediately before the infinitive."},
+      {w:"bestehen",role:"Infinitive — Verb-Final",case:"verb",why:"Infinitive at the END of the um-zu clause. bestehen (to pass an exam)."}
+    ]},
+    {sent:"Er ging, ohne sich zu verabschieden.",en:"He left without saying goodbye.",words:[
+      {w:"Er",role:"Pronoun — Subject",case:"nom",why:"Nominative. 3rd person singular."},
+      {w:"ging",role:"Verb (Präteritum)",case:"verb",why:"Position 2. Präteritum of gehen (simple past — used in narration)."},
+      {w:"ohne",role:"Conjunction",case:"other",why:"ohne...zu = without doing. Introduces a negative purpose/manner clause."},
+      {w:"sich",role:"Reflexive Pronoun (Accusative)",case:"acc",why:"sich = 3rd person reflexive. verabschieden is a reflexive verb. Accusative because no other accusative object."},
+      {w:"zu",role:"Infinitive Marker",case:"other",why:"The zu of ohne...zu."},
+      {w:"verabschieden",role:"Infinitive — Verb-Final",case:"verb",why:"Infinitive at end of the ohne-zu clause. sich verabschieden = to say goodbye."}
+    ]},
+    {sent:"Das Buch liegt auf dem Tisch.",en:"The book is lying on the table.",words:[
+      {w:"Das",role:"Article",case:"nom",why:"Neuter nominative article. Das Buch is the subject."},
+      {w:"Buch",role:"Noun — Subject",case:"nom",why:"Nominative. The thing being described."},
+      {w:"liegt",role:"Verb",case:"verb",why:"Position 2. 3rd person singular of liegen. liegen = static position → signals LOCATION → dative."},
+      {w:"auf",role:"Two-Way Preposition (Location)",case:"dat",why:"auf is a two-way preposition. With liegen (static), it signals LOCATION → dative. (Compare: legen + auf → direction → accusative)"},
+      {w:"dem",role:"Article",case:"dat",why:"Masculine dative article: der→dem. Tisch is masculine (der Tisch). Location = dative."},
+      {w:"Tisch",role:"Noun — Dative (Location)",case:"dat",why:"Masculine dative. Location. The table is where the book is statically located."}
+    ]}
+  ]
+},
+{
+  id:7, title:"Konjunktiv II, Passive & The Complete Algorithm",
+  subtitle:"Hypotheticals · Reported Speech · Passive Voice · Full Dissection System",
+  tags:["KONJUNKTIV II","KONJUNKTIV I","PASSIVE","ALGORITHM","B2"],
+  lessonHTML:`
+    <h3>KONJUNKTIV II — HYPOTHETICALS, WISHES, POLITENESS</h3>
+    <p>Three forms. That's it. For EVERYTHING else use würde + infinitive.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0;">
+      <div style="background:var(--surface3);border:1px solid var(--border2);border-top:2px solid var(--gold);padding:14px;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--gold);margin-bottom:5px;">wäre ${audBtn('wäre')}</div>
+        <div style="font-size:0.68rem;color:var(--muted);">would be (from sein)</div>
+        <div style="font-size:0.75rem;color:var(--text);margin-top:7px;">Das wäre toll! ${audBtn('Das wäre toll!')}</div>
+      </div>
+      <div style="background:var(--surface3);border:1px solid var(--border2);border-top:2px solid var(--gold);padding:14px;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--gold);margin-bottom:5px;">hätte ${audBtn('hätte')}</div>
+        <div style="font-size:0.68rem;color:var(--muted);">would have (from haben)</div>
+        <div style="font-size:0.75rem;color:var(--text);margin-top:7px;">Ich hätte gern Kaffee. ${audBtn('Ich hätte gern Kaffee.')}</div>
+      </div>
+      <div style="background:var(--surface3);border:1px solid var(--border2);border-top:2px solid var(--gold);padding:14px;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--gold);margin-bottom:5px;">würde + inf. ${audBtn('Ich würde das machen.')}</div>
+        <div style="font-size:0.68rem;color:var(--muted);">would do (everything else)</div>
+        <div style="font-size:0.75rem;color:var(--text);margin-top:7px;">Ich würde das machen. ${audBtn('Ich würde das machen.')}</div>
+      </div>
+    </div>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>TYPE</th></tr>
+      <tr><td>Wenn ich reich wäre, würde ich reisen.</td><td>${audBtn('Wenn ich reich wäre, würde ich reisen.')}</td><td>Hypothetical — wenn+Konj. II</td></tr>
+      <tr><td>Könntest du mir helfen?</td><td>${audBtn('Könntest du mir helfen?')}</td><td>Polite request — Konj. II of können</td></tr>
+      <tr><td>Ich wünschte, ich hätte mehr Zeit.</td><td>${audBtn('Ich wünschte, ich hätte mehr Zeit.')}</td><td>Wish — hätte</td></tr>
+      <tr><td>Das wäre ein großer Fehler.</td><td>${audBtn('Das wäre ein großer Fehler.')}</td><td>Speculation — wäre (not: würde sein)</td></tr>
+      <tr><td>An deiner Stelle würde ich anders handeln.</td><td>${audBtn('An deiner Stelle würde ich anders handeln.')}</td><td>Advice — würde + inf.</td></tr>
+    </table>
+    <div class="why-box"><p>Why 'würde'? The older Konjunktiv II forms (like 'ich machte') became indistinguishable from the simple past. To avoid ambiguity, speakers recruited 'würde' (from 'werden') as a helper in the 18th century. It's a recent renovation — grammar evolving in real time.</p></div>
+    <h3>KONJUNKTIV I — REPORTED SPEECH (Formal/Journalistic)</h3>
+    <p>Take the infinitive stem and add endings: -e, -est, -e, -en, -et, -en. Used in news, journalism, and formal texts to report what someone said without endorsing it.</p>
+    <table class="gtable">
+      <tr><th>EXAMPLE</th><th>AUDIO</th><th>FORM</th></tr>
+      <tr><td>Er sagte, er sei müde.</td><td>${audBtn('Er sagte, er sei müde.')}</td><td>sein → sei (Konj. I)</td></tr>
+      <tr><td>Sie behauptet, sie habe das nicht gewusst.</td><td>${audBtn('Sie behauptet, sie habe das nicht gewusst.')}</td><td>haben → habe (Konj. I)</td></tr>
+      <tr><td>Die Polizei meldet, der Mann könne Deutsch.</td><td>${audBtn('Die Polizei meldet, der Mann könne Deutsch.')}</td><td>können → könne (Konj. I)</td></tr>
+    </table>
+    <p>If Konjunktiv I is identical to indicative (e.g., sie haben = sie haben) → use Konjunktiv II as replacement: Sie sagten, sie <strong>hätten</strong> keine Zeit.</p>
+    <h3>PASSIVE VOICE</h3>
+    <p>Formula: <strong>werden + Partizip II</strong> (passive shifts focus to the action/recipient, doer is unknown or irrelevant).</p>
+    <table class="gtable">
+      <tr><th>PASSIVE TYPE</th><th>FORMULA</th><th>EXAMPLE + AUDIO</th></tr>
+      <tr><td>Present passive</td><td>wird + Partizip II</td><td>${audBtn('Das Buch wird gelesen.')} Das Buch wird gelesen.</td></tr>
+      <tr><td>Past passive (Präteritum)</td><td>wurde + Partizip II</td><td>${audBtn('Das Haus wurde gebaut.')} Das Haus wurde gebaut.</td></tr>
+      <tr><td>Perfekt passive</td><td>ist + Partizip II + worden</td><td>${audBtn('Der Brief ist geschrieben worden.')} Der Brief ist geschrieben worden.</td></tr>
+      <tr><td>Passive with modal</td><td>Modal + Partizip II + werden</td><td>${audBtn('Das Auto muss repariert werden.')} Das Auto muss repariert werden.</td></tr>
+    </table>
+    <h3>THE COMPLETE B2 DISSECTION ALGORITHM</h3>
+    <div style="margin:14px 0;">
+      <div class="algo-step"><div class="algo-num">1</div><div class="algo-text"><strong>Find the conjugated verb.</strong> Position 2 (main) · Position 1 (question/command) · END (after weil, dass, wenn, obwohl, als, bevor, nachdem, damit, ob, falls)</div></div>
+      <div class="algo-step"><div class="algo-num">2</div><div class="algo-text"><strong>Who does the verb? → NOMINATIVE</strong> (der/die/das/die). Ask: Wer oder was?</div></div>
+      <div class="algo-step"><div class="algo-num">3</div><div class="algo-text"><strong>What is directly verbed? → ACCUSATIVE</strong>. Ask: Wen oder was? If masculine → den/einen/keinen.</div></div>
+      <div class="algo-step"><div class="algo-num">4</div><div class="algo-text"><strong>Is there a to/for recipient, dative trigger preposition (mit/nach/bei/von/seit/zu/aus), or dative trigger verb (helfen/danken/gehören)? → DATIVE</strong>. Use dem/der/dem/den+n.</div></div>
+      <div class="algo-step"><div class="algo-num">5</div><div class="algo-text"><strong>Is there possession, or a genitive preposition (wegen/trotz/während/statt)? → GENITIVE</strong>. Look for des/der + noun with -s ending.</div></div>
+      <div class="algo-step"><div class="algo-num">6</div><div class="algo-text"><strong>Identify subordinate clauses.</strong> They have verb-final structure, introduced by subordinating conjunctions or relative pronouns.</div></div>
+      <div class="algo-step"><div class="algo-num">7</div><div class="algo-text"><strong>Map every noun to its role via its article.</strong> The article tells you the case; the case tells you the function. You can now read any German sentence.</div></div>
+    </div>
+  `,
+  drills:[
+    {q:"Konjunktiv II of 'sein' (ich form):",opts:["würde sein","wäre","war","sei"],ans:1,exp:"wäre is the Konjunktiv II of sein. NEVER say 'würde sein'. Das wäre toll! / Wenn ich reich wäre..."},
+    {q:"Konjunktiv II of 'haben' (ich form):",opts:["hätte","würde haben","hatte","habe"],ans:0,exp:"hätte is the Konjunktiv II of haben. NEVER say 'würde haben'. Ich hätte gern Kaffee. / Wenn ich Zeit hätte..."},
+    {q:"'I would do it' =",opts:["Ich würde es machen.","Ich mache es würde.","Ich würde es gemacht.","Ich machen würde."],ans:0,exp:"würde + infinitive at end for all verbs except sein/haben. Ich würde es machen."},
+    {q:"Polite request: '___ Sie mir bitte helfen?' (können)",opts:["Können","Könnten","Kann","Könnte"],ans:1,exp:"Könnten is the Konjunktiv II of können. Far more polite than 'Können'. Könnten Sie mir bitte helfen?"},
+    {q:"'Wenn ich reich ___, würde ich reisen.' (sein)",opts:["bin","wäre","war","sei"],ans:1,exp:"Hypothetical condition: wenn + Konjunktiv II. sein → wäre. Wenn ich reich wäre, würde ich reisen."},
+    {q:"'Das ___ ein großer Fehler sein.' (would be — warning: use the correct form)",opts:["würde","wäre","würde sein","sei"],ans:1,exp:"sein → wäre (NOT würde sein). Das wäre ein großer Fehler. Always use wäre for 'would be', not würde sein."},
+    {q:"Konjunktiv I of 'sein' (er form) for reported speech:",opts:["sei","wäre","ist","war"],ans:0,exp:"Konjunktiv I of sein: sei. Er sagte, er SEI müde. Used in formal/journalistic reported speech."},
+    {q:"Konjunktiv I of 'haben' (sie sg.) for reported speech:",opts:["habe","hätte","hat","hätten"],ans:0,exp:"Konjunktiv I of haben: habe. Sie behauptet, sie HABE das nicht gewusst."},
+    {q:"When Konjunktiv I is identical to indicative, use:",opts:["Konjunktiv II instead","Indicative — no difference","Past tense","Passive"],ans:0,exp:"If Konj. I = indicative (sie haben = sie haben), use Konjunktiv II as replacement: sie HÄTTEN. Prevents ambiguity."},
+    {q:"Passive present: 'Das Buch ___ gelesen.' (werden)",audio:"Das Buch wird gelesen.",opts:["wird","wird sein","wurde","worden"],ans:0,exp:"Present passive: wird + Partizip II. Das Buch wird gelesen = The book is being read."},
+    {q:"Passive past: 'Das Haus ___ gebaut.' (werden, Präteritum)",audio:"Das Haus wurde gebaut.",opts:["wurde","wird","worden","wurde sein"],ans:0,exp:"Past passive (Präteritum): wurde + Partizip II. Das Haus wurde gebaut = The house was built."},
+    {q:"Perfekt passive: 'Der Brief ___ geschrieben ___.'",audio:"Der Brief ist geschrieben worden.",opts:["ist...worden","hat...worden","ist...geworden","wurde...worden"],ans:0,exp:"Perfekt passive: ist + Partizip II + worden. NOT 'geworden' — in passive the perfect auxiliary is worden."},
+    {q:"'Das Auto ___ repariert werden.' (müssen)",audio:"Das Auto muss repariert werden.",opts:["muss","wird","musste","ist"],ans:0,exp:"Passive with modal: Modal (position 2) + Partizip II + werden (at end). Das Auto MUSS repariert werden."},
+    {q:"In the B2 algorithm, after 'wegen', what case?",opts:["Accusative","Dative","Genitive"],ans:2,exp:"wegen is a genitive preposition. Always forces genitive. Wegen des schlechten Wetters."},
+    {q:"'Sie hilft ___ Kindern.' (the children — dative plural)",opts:["die","den","der","dem"],ans:1,exp:"helfen = dative trigger verb. Kinder is plural. Plural dative: die→den (AND noun gets -n: Kinder→Kindern). den Kindern."},
+    {q:"'Das ist das Auto ___ Mannes.' (of the man — genitive)",opts:["des","dem","den","der"],ans:0,exp:"Masculine genitive: der→des. AND noun adds -s: Mann→Mannes. des Mannes."},
+    {q:"'___ ich du wäre, würde ich anders handeln.' (if)",opts:["Wenn","Weil","Dass","Ob"],ans:0,exp:"wenn introduces hypothetical conditions with Konjunktiv II. Wenn ich du wäre, würde ich anders handeln."},
+    {q:"In the B2 sentence, what role does 'mir' play in 'wäre mir der Fehler nicht passiert'?",opts:["Nominative subject","Accusative object","Dative (target of passieren)","Genitive owner"],ans:2,exp:"passieren takes dative — the person it 'happens to' is dative. mir = dative of ich = the person the mistake would have happened to."},
+    {q:"'Das Haus ___ von dem Architekten gebaut.' (passive Präteritum)",audio:"Das Haus wurde von dem Architekten gebaut.",opts:["wurde","wird","ist...worden","wird...werden"],ans:0,exp:"Past passive: wurde + Partizip II. von + dative marks the agent in passive sentences. von dem = vom Architekten."},
+    {q:"'Er sagte, er ___ krank.' (sein, Konjunktiv I for reported speech)",audio:"Er sagte, er sei krank.",opts:["sei","wäre","ist","war"],ans:0,exp:"Konjunktiv I of sein = sei. Er sagte, er SEI krank. This distances the reporter from the claim without denying it."}
+  ],
+  dissections:[
+    {sent:"Das wäre toll!",en:"That would be great!",words:[
+      {w:"Das",role:"Pronoun — Subject",case:"nom",why:"Nominative demonstrative pronoun. The subject."},
+      {w:"wäre",role:"Verb (Konjunktiv II)",case:"verb",why:"Konjunktiv II of sein. Position 2. Used for hypothetical/wishful expression. NEVER 'würde sein' — always wäre."},
+      {w:"toll",role:"Adjective (Predicate)",case:"other",why:"Predicate adjective after wäre (= sein in Konj. II). No case ending needed."}
+    ]},
+    {sent:"Wenn ich Zeit hätte, würde ich kommen.",en:"If I had time, I would come.",words:[
+      {w:"Wenn",role:"Subordinating Conjunction",case:"other",why:"wenn = if/when. Verb-final connector. The wenn-clause is the hypothetical condition in Konjunktiv II."},
+      {w:"ich",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the wenn-clause."},
+      {w:"Zeit",role:"Noun — Direct Object",case:"acc",why:"Accusative. The thing being 'had.' Zeit is feminine: die Zeit. Accusative = same as nominative for feminine."},
+      {w:"hätte",role:"Verb (Konjunktiv II) — Verb-Final",case:"verb",why:"Konjunktiv II of haben = hätte. At the END of the wenn-clause (verb-final connector)."},
+      {w:"würde",role:"Auxiliary (Konjunktiv II)",case:"verb",why:"Position 2 in the main clause. The entire wenn-clause occupies position 1, causing inversion. würde + infinitive = 'would do.'"},
+      {w:"ich",role:"Pronoun — Subject (main)",case:"nom",why:"Nominative. Position 3 — pushed back by the fronted wenn-clause."},
+      {w:"kommen",role:"Infinitive — Verb-Final",case:"verb",why:"Main verb infinitive at the END. würde+kommen = would come."}
+    ]},
+    {sent:"Das Buch wird gelesen.",en:"The book is being read.",words:[
+      {w:"Das",role:"Article",case:"nom",why:"Neuter nominative article. Das Buch is the grammatical subject of the passive sentence — the recipient of the action."},
+      {w:"Buch",role:"Noun — Passive Subject",case:"nom",why:"Nominative. In passive, the original object becomes the subject. The book IS READ — it doesn't do anything."},
+      {w:"wird",role:"Passive Auxiliary (werden)",case:"verb",why:"Position 2. werden (present, 3rd singular) + Partizip II = present passive. The doer is unknown/irrelevant."},
+      {w:"gelesen",role:"Partizip II — Verb-Final",case:"verb",why:"Past participle of lesen at the END. lesen → gelesen (irregular strong verb)."}
+    ]},
+    {sent:"Er sagte, er sei müde.",en:"He said he was tired. (reported speech)",words:[
+      {w:"Er",role:"Pronoun — Subject (main)",case:"nom",why:"Nominative. Subject of the main clause 'er sagte.'"},
+      {w:"sagte",role:"Verb (Präteritum)",case:"verb",why:"Position 2. Simple past of sagen. Introduces reported speech."},
+      {w:"er",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the reported speech clause."},
+      {w:"sei",role:"Verb (Konjunktiv I) — Verb-Final",case:"verb",why:"Konjunktiv I of sein = sei. Used for formal reported speech — distances reporter from the claim. Goes to end because the clause follows 'er sagte' (implied dass)."},
+      {w:"müde",role:"Adjective (Predicate)",case:"other",why:"Predicate adjective after sei (= sein in Konj. I). No case ending."}
+    ]},
+    {sent:"Könntest du mir helfen?",en:"Could you help me? (polite)",words:[
+      {w:"Könntest",role:"Modal Verb (Konjunktiv II)",case:"verb",why:"Position 1 — yes/no question. Konjunktiv II of können = könntest (2nd person singular). Far more polite than 'Kannst du.'"},
+      {w:"du",role:"Pronoun — Subject",case:"nom",why:"Nominative subject. Position 2 in the question."},
+      {w:"mir",role:"Pronoun — Dative Object",case:"dat",why:"mir = dative of ich. helfen is a dative trigger verb."},
+      {w:"helfen",role:"Verb (Infinitive) — Verb-Final",case:"verb",why:"Main verb infinitive at the END — pushed there by the modal könntest."}
+    ]},
+    {sent:"Wenn ich den Bericht rechtzeitig abgegeben hätte, wäre mir der Fehler nicht passiert.",en:"If I had handed in the report on time, the mistake would not have happened to me.",words:[
+      {w:"Wenn",role:"Subordinating Conjunction",case:"other",why:"wenn introduces a hypothetical past condition in Konjunktiv II Perfekt."},
+      {w:"ich",role:"Pronoun — Subject (subordinate)",case:"nom",why:"Nominative subject of the wenn-clause."},
+      {w:"den",role:"Article",case:"acc",why:"Masculine accusative: der→den. Bericht is masculine (der Bericht)."},
+      {w:"Bericht",role:"Noun — Direct Object",case:"acc",why:"Accusative. The thing being handed in. Receiver."},
+      {w:"rechtzeitig",role:"Adverb",case:"other",why:"rechtzeitig = on time. Manner adverb."},
+      {w:"abgegeben",role:"Partizip II (Separable)",case:"verb",why:"Participle of abgeben. Separable: ab+ge+geben = abgegeben."},
+      {w:"hätte",role:"Auxiliary (Konjunktiv II Perfekt) — Verb-Final",case:"verb",why:"hätte = Konj. II of haben. Forms Konjunktiv II Perfekt with the participle. At the END of the wenn-clause."},
+      {w:"wäre",role:"Auxiliary (Konjunktiv II) — Position 2",case:"verb",why:"Konjunktiv II of sein. The ENTIRE wenn-clause is position 1 → wäre immediately at position 2."},
+      {w:"mir",role:"Pronoun — Dative",case:"dat",why:"mir = dative of ich. passieren takes dative — the mistake 'happens to' someone (dative target)."},
+      {w:"der",role:"Article",case:"nom",why:"Masculine nominative: der Fehler is the grammatical subject of passieren."},
+      {w:"Fehler",role:"Noun — Subject",case:"nom",why:"Nominative. The subject of wäre passiert."},
+      {w:"nicht",role:"Negation",case:"other",why:"nicht = not. Negates the entire predicate."},
+      {w:"passiert",role:"Partizip II — Verb-Final",case:"verb",why:"Participle of passieren. passieren uses sein (event that happens TO someone). Konj. II Perfekt: wäre...passiert."}
+    ]}
+  ]
+}
+];
+
+// ═══════════════════════════════════════════════
+// FORGE WORDS
+// ═══════════════════════════════════════════════
+const FORGE_WORDS = [
+  {g:"helfen",e:"to help (dative verb)"},{g:"der Mann",e:"the man"},{g:"die Frau",e:"the woman"},
+  {g:"das Kind",e:"the child"},{g:"gehen",e:"to go (sein in Perfekt)"},{g:"kaufen",e:"to buy"},
+  {g:"weil",e:"because (verb to end)"},{g:"mit",e:"with (dative trigger)"},{g:"können",e:"can (modal)"},
+  {g:"aufstehen",e:"to get up (separable)"},{g:"danken",e:"to thank (dative verb)"},{g:"kommen",e:"to come (sein)"},
+  {g:"wenn",e:"when/if (verb to end)"},{g:"fahren",e:"to drive (sein in Perfekt)"},{g:"gehören",e:"to belong (dative)"},
+  {g:"nach",e:"after/to (dative trigger)"},{g:"müssen",e:"must (modal)"},{g:"anrufen",e:"to call (separable)"},
+  {g:"wäre",e:"would be (Konjunktiv II)"},{g:"hätte",e:"would have (Konjunktiv II)"},{g:"obwohl",e:"although (verb to end)"},
+  {g:"sehen",e:"to see (accusative)"},{g:"geben",e:"to give (dative recipient)"},{g:"von",e:"from/of (dative trigger)"},
+  {g:"dass",e:"that (verb to end)"},{g:"werden",e:"to become / passive auxiliary"},{g:"trotz",e:"despite (genitive)"},
+  {g:"wegen",e:"because of (genitive)"},{g:"sich erinnern",e:"to remember (+ an + acc)"},{g:"warten",e:"to wait (warten auf + acc)"}
+];
+
+// ═══════════════════════════════════════════════
+// LABEL CATEGORIES
+// ═══════════════════════════════════════════════
+const LABEL_CATS = [
+  {id:"nom",name:"NOMINATIVE",desc:"Subject / Doer — der/die/das (unchanged)"},
+  {id:"acc",name:"ACCUSATIVE",desc:"Direct Object / Receiver — den/einen (masc. changes)"},
+  {id:"dat",name:"DATIVE",desc:"Indirect Object / Target — dem/der/dem/den+n"},
+  {id:"gen",name:"GENITIVE",desc:"Possession / Owner — des+s/der/des+s"},
+  {id:"verb",name:"VERB",desc:"Conjugated verb, participle, infinitive, auxiliary"},
+  {id:"other",name:"OTHER",desc:"Adverb, conjunction, preposition, adjective, particle"},
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let S = {xp:0,streak:0,progress:{},forgeLog:[],forgeWordIdx:0};
+function loadS(){try{const d=localStorage.getItem('dc3');if(d){const p=JSON.parse(d);Object.assign(S,p);}}catch(e){}}
+function saveS(){try{localStorage.setItem('dc3',JSON.stringify(S));}catch(e){}}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goToDays(){renderDays();updateTopbar();showScreen('s-days');}
+function openRef(){document.getElementById('ref-overlay').classList.add('open');}
+function closeRef(e){if(e.target===document.getElementById('ref-overlay'))document.getElementById('ref-overlay').classList.remove('open');}
+function updateTopbar(){document.querySelectorAll('#tb-xp,#l-tb-xp,#d-xp,#dis-xp,#r-xp-total').forEach(el=>el.textContent=S.xp);document.getElementById('tb-streak').textContent=S.streak;document.getElementById('l-xp').textContent=S.xp;}
+function resetAll(){if(!confirm('Reset ALL progress?'))return;S={xp:0,streak:0,progress:{},forgeLog:[],forgeWordIdx:0};saveS();updateTopbar();renderDays();toast('Progress reset.');}
+
+// ═══════════════════════════════════════════════
+// DAYS GRID
+// ═══════════════════════════════════════════════
+function renderDays(){
+  const g=document.getElementById('days-grid');g.innerHTML='';
+  DAYS.forEach((day,i)=>{
+    const prog=S.progress[day.id]||{};
+    const prev=i===0||(S.progress[DAYS[i-1].id]&&S.progress[DAYS[i-1].id].drillsDone);
+    const locked=!prev&&!prog.drillsDone;
+    const done=!!prog.dissectDone;
+    const pct=prog.drillCorrect?Math.round((prog.drillCorrect/20)*100):0;
+    const card=document.createElement('div');
+    card.className='day-card'+(done?' done':'')+(locked?' locked':'');
+    card.innerHTML=`<div class="d-num">DAY ${day.id} ${done?'✓':locked?'🔒':'◆'}</div>
+      <div class="d-title">${day.title}</div>
+      <div class="d-sub">${day.subtitle}</div>
+      <div class="d-tags">${day.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="d-meta"><span>${day.drills.length} DRILLS · ${day.dissections.length} DISSECTIONS · ${prog.xp||0} XP</span><span>${done?'✅':locked?'🔒':prog.drillsDone?'⬡ DISSECT →':'▶'}</span></div>
+      <div class="d-bar"><div class="d-bar-fill" style="width:${pct}%"></div></div>`;
+    if(!locked)card.onclick=()=>openLesson(day.id);
+    g.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// LESSON
+// ═══════════════════════════════════════════════
+let curDay=null;
+function openLesson(id){
+  curDay=DAYS.find(d=>d.id===id);
+  document.getElementById('l-tb-lbl').textContent=`DAY ${id} OF 7`;
+  document.getElementById('l-day-lbl').textContent=`DAY ${id} — BRIEFING`;
+  document.getElementById('l-title').textContent=curDay.title;
+  document.getElementById('l-sub').textContent=curDay.subtitle;
+  document.getElementById('l-content').innerHTML=curDay.lessonHTML;
+  showScreen('s-lesson');
+}
+
+// ═══════════════════════════════════════════════
+// DRILL ENGINE
+// ═══════════════════════════════════════════════
+let dIdx=0,dCorrect=0,dWrong=0,dXP=0,dLives=5,dMistakes=[];
+function startDrills(){
+  dIdx=0;dCorrect=0;dWrong=0;dXP=0;dLives=5;dMistakes=[];
+  document.getElementById('d-day-lbl').textContent=`DAY ${curDay.id} — DRILLS`;
+  document.getElementById('d-xp').textContent=S.xp;
+  updateHearts();
+  showScreen('s-drill');
+  renderDrill();
+}
+function renderDrill(){
+  const drills=curDay.drills;
+  if(dIdx>=drills.length){showResult();return;}
+  const dr=drills[dIdx];
+  const pct=Math.round((dIdx/drills.length)*100);
+  document.getElementById('d-counter').textContent=`${dIdx+1} / ${drills.length}`;
+  document.getElementById('d-prog').style.width=pct+'%';
+  const audH=dr.audio?`<button class="aud" onclick="speak('${dr.audio.replace(/'/g,"\\'")}',this)" style="margin-top:8px;display:block;">🔊 Hear example</button>`:'';
+  document.getElementById('d-card').innerHTML=`
+    <div class="d-type">DRILL ${dIdx+1} OF ${drills.length} · DAY ${curDay.id}: ${curDay.title.toUpperCase()}</div>
+    <div class="d-q">${dr.q}</div>${audH}
+    <div class="d-opts">${dr.opts.map((o,i)=>`<button class="opt" onclick="checkAns(this,${i},${dr.ans},'${escS(dr.exp)}')"><span class="opt-k">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}</div>`;
+  const fb=document.getElementById('fb-box');fb.style.display='none';fb.className='fb-box';
+  document.getElementById('btn-cont').style.display='none';
+}
+function checkAns(btn,chosen,correct,exp){
+  document.querySelectorAll('.opt').forEach(b=>b.classList.add('dis'));
+  const fb=document.getElementById('fb-box');
+  const cont=document.getElementById('btn-cont');
+  if(chosen===correct){
+    btn.classList.add('ok');dCorrect++;dXP+=20;S.xp+=20;
+    fb.className='fb-box ok-fb';fb.innerHTML=`<div class="fb-title">✓ CORRECT</div><div class="fb-exp">${exp}</div>`;
+    toast('✓ Correct','+20 XP');
+  }else{
+    btn.classList.add('bad');document.querySelectorAll('.opt')[correct].classList.add('show-ok');
+    dWrong++;dXP+=5;S.xp+=5;dLives=Math.max(0,dLives-1);
+    dMistakes.push({q:curDay.drills[dIdx].q,ans:curDay.drills[dIdx].opts[correct],exp});
+    fb.className='fb-box bad-fb';fb.innerHTML=`<div class="fb-title">✕ WRONG — Correct: ${curDay.drills[dIdx].opts[correct]}</div><div class="fb-exp">${exp}</div>`;
+    updateHearts();
+  }
+  fb.style.display='block';cont.style.display='block';
+  document.getElementById('d-xp').textContent=S.xp;saveS();
+}
+function nextDrill(){dIdx++;renderDrill();}
+function updateHearts(){document.getElementById('hearts').textContent='❤️'.repeat(dLives)+'🖤'.repeat(5-dLives);}
+function confirmBack(){if(confirm('Leave drills? Progress not saved.'))goToDays();}
+function escS(s){return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+// ═══════════════════════════════════════════════
+// RESULT SCREEN
+// ═══════════════════════════════════════════════
+function showResult(){
+  const pct=Math.round((dCorrect/curDay.drills.length)*100);
+  if(!S.progress[curDay.id])S.progress[curDay.id]={xp:0};
+  S.progress[curDay.id].drillsDone=true;
+  S.progress[curDay.id].drillCorrect=dCorrect;
+  S.progress[curDay.id].xp=(S.progress[curDay.id].xp||0)+dXP;
+  if(pct===100)S.streak++;
+  saveS();
+  document.getElementById('r-title').textContent=`DAY ${curDay.id} DRILLS COMPLETE`;
+  document.getElementById('r-score').textContent=pct+'%';
+  document.getElementById('r-correct').textContent=dCorrect;
+  document.getElementById('r-wrong').textContent=dWrong;
+  document.getElementById('r-xp').textContent=dXP;
+  document.getElementById('r-xp-total').textContent=S.xp;
+  const mw=document.getElementById('mis-wrap');
+  mw.innerHTML=dMistakes.length>0?`<div class="mis-title">✕ REVIEW — ${dMistakes.length} MISTAKE${dMistakes.length>1?'S':''}</div>${dMistakes.map(m=>`<div class="mis-item"><div class="mis-q">${m.q}</div><div class="mis-ans">✓ ${m.ans}</div><div class="mis-exp">${m.exp}</div></div>`).join('')}`:`<div style="color:var(--green);font-size:0.83rem;margin:10px 0;">⬡ PERFECT SCORE</div>`;
+  showScreen('s-result');updateTopbar();
+}
+function retryDay(){startDrills();}
+function goToDissect(){initDissection();showScreen('s-dissect');}
+
+// ═══════════════════════════════════════════════
+// DISSECTION MODE
+// ═══════════════════════════════════════════════
+let disIdx=0,disLabels={},disScore=0,disTot=0,selectedToken=null,selectedLabel=null;
+function initDissection(){
+  disIdx=0;disScore=0;disTot=0;disLabels={};selectedToken=null;selectedLabel=null;
+  document.getElementById('dis-lbl').textContent=`DISSECTION — DAY ${curDay.id}`;
+  document.getElementById('dis-total').textContent=curDay.dissections.length;
+  document.getElementById('dis-score').textContent='0';
+  document.getElementById('dis-score-total').textContent='0';
+  document.getElementById('dis-xp').textContent=S.xp;
+  loadDissection();
+}
+function loadDissection(){
+  const dis=curDay.dissections[disIdx];
+  disLabels={};selectedToken=null;selectedLabel=null;
+  document.getElementById('dis-idx').textContent=disIdx+1;
+  document.getElementById('dis-sentence').textContent=dis.sent;
+  document.getElementById('dis-en').textContent=dis.en;
+  document.getElementById('label-panel').classList.remove('open');
+  document.getElementById('dissect-analysis').style.display='none';
+  document.getElementById('da-rows').innerHTML='';
+  document.getElementById('check-dis-btn').classList.remove('show');
+  const dr=document.getElementById('dis-result');dr.className='dissect-result';dr.style.display='none';
+  document.getElementById('dis-nav').style.display='none';
+  const tokens=document.getElementById('word-tokens');
+  tokens.innerHTML='';
+  // Strip punctuation for display but keep original for analysis
+  const words=dis.sent.match(/[\wäöüÄÖÜß]+/g)||[];
+  const unique=[];
+  words.forEach((w,i)=>{
+    const alreadyLabeled=dis.words.findIndex(x=>x.w===w);
+    if(alreadyLabeled>=0&&!unique.includes(w)){unique.push(w);}
+    const tok=document.createElement('div');
+    tok.className='token';
+    tok.dataset.word=w;
+    tok.dataset.idx=i;
+    tok.innerHTML=`<div class="tok-badge" id="badge-${w}"></div>${w}<button class="aud" onclick="event.stopPropagation();speak('${w.replace(/'/g,"\\'")}',this)" style="margin-left:6px;font-size:0.65rem;">🔊</button>`;
+    tok.onclick=()=>selectToken(tok,w);
+    tokens.appendChild(tok);
+  });
+  updateCheckBtn();
+}
+function selectToken(tok,word){
+  document.querySelectorAll('.token').forEach(t=>t.classList.remove('selected'));
+  tok.classList.add('selected');
+  selectedToken=word;selectedLabel=null;
+  const panel=document.getElementById('label-panel');
+  panel.classList.add('open');
+  document.getElementById('lp-word').innerHTML=`${word} <button class="aud" onclick="speak('${word}',this)">🔊</button>`;
+  document.getElementById('why-input').value=disLabels[word]?disLabels[word].why||'':'';
+  selectedLabel=disLabels[word]?disLabels[word].cat:null;
+  const cats=document.getElementById('label-cats');
+  cats.innerHTML=LABEL_CATS.map(c=>`<div class="lcat${selectedLabel===c.id?' picked':''}" onclick="pickLabel('${c.id}')"><div class="cat-name">${c.name}</div><div class="cat-desc">${c.desc}</div></div>`).join('');
+}
+function pickLabel(catId){
+  selectedLabel=catId;
+  document.querySelectorAll('.lcat').forEach(c=>c.classList.remove('picked'));
+  document.querySelectorAll('.lcat').forEach(c=>{if(c.querySelector('.cat-name').textContent===LABEL_CATS.find(x=>x.id===catId).name)c.classList.add('picked');});
+}
+function confirmLabel(){
+  if(!selectedToken||!selectedLabel){toast('Pick a category first.');return;}
+  const why=document.getElementById('why-input').value.trim();
+  disLabels[selectedToken]={cat:selectedLabel,why};
+  const tok=document.querySelector(`.token[data-word="${selectedToken}"]`);
+  if(tok){
+    tok.classList.remove('selected');tok.classList.add('labeled');
+    const badge=tok.querySelector('.tok-badge');
+    if(badge){badge.style.display='flex';badge.textContent=selectedLabel.toUpperCase();}
+  }
+  document.getElementById('label-panel').classList.remove('open');
+  selectedToken=null;selectedLabel=null;
+  updateCheckBtn();
+  updateAnalysisPreview();
+}
+function updateCheckBtn(){
+  const dis=curDay.dissections[disIdx];
+  const wordList=dis.words.map(w=>w.w);
+  const labeled=wordList.filter(w=>disLabels[w]);
+  if(labeled.length>=Math.ceil(wordList.length*0.5)){
+    document.getElementById('check-dis-btn').classList.add('show');
+  }
+}
+function updateAnalysisPreview(){
+  const dis=curDay.dissections[disIdx];
+  const el=document.getElementById('dissect-analysis');
+  const rows=document.getElementById('da-rows');
+  el.style.display='block';
+  rows.innerHTML=Object.entries(disLabels).map(([w,l])=>{
+    return `<div class="da-row">
+      <div class="da-word">${w} <button class="aud" onclick="speak('${w}',this)">🔊</button></div>
+      <div class="da-badge ${l.cat}">${l.cat.toUpperCase()}</div>
+      <div class="da-why"><span class="user-why">${l.why||'(no reasoning written)'}</span></div>
+    </div>`;
+  }).join('');
+}
+function checkDissection(){
+  const dis=curDay.dissections[disIdx];
+  let pts=0,tot=dis.words.length;
+  const resEl=document.getElementById('dis-result');
+  const rows=document.getElementById('da-rows');
+  let html='';
+  dis.words.forEach(w=>{
+    const userLabel=disLabels[w.w];
+    const correct=userLabel&&userLabel.cat===w.case;
+    if(correct)pts++;
+    const badgeCls=w.case;
+    html+=`<div class="da-row">
+      <div class="da-word">${w.w} <button class="aud" onclick="speak('${w.w.replace(/'/g,"\\'")}',this)">🔊</button></div>
+      <div class="da-badge ${badgeCls}">${w.case.toUpperCase()} — ${w.role}</div>
+      <div class="da-why">
+        ${userLabel?`<span class="user-why" style="color:${correct?'var(--green)':'var(--red)'}">${correct?'✓':'✕'} You said: ${userLabel.cat.toUpperCase()}${userLabel.why?' — "'+userLabel.why+'"':''}</span><br>`:'<span style="color:var(--muted)">Not labeled</span><br>'}
+        <span class="correct-why">Correct: ${w.why}</span>
+      </div>
+    </div>`;
+  });
+  document.getElementById('da-rows').innerHTML=html;
+  document.getElementById('dissect-analysis').style.display='block';
+  const pct=Math.round((pts/tot)*100);
+  const xpGain=pts*15;S.xp+=xpGain;
+  disScore+=pts;disTot+=tot;
+  document.getElementById('dis-score').textContent=disScore;
+  document.getElementById('dis-score-total').textContent=disTot;
+  document.getElementById('dis-xp').textContent=S.xp;
+  const pass=pct>=60;
+  resEl.className='dissect-result '+(pass?'pass':'fail')+' show';
+  resEl.style.display='block';
+  resEl.innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:0.75rem;color:${pass?'var(--green)':'var(--red)'};margin-bottom:5px;">${pass?'✓ SOLID ANALYSIS':'✕ REVIEW NEEDED'} — ${pts}/${tot} correct (${pct}%)</div><div style="font-size:0.72rem;color:var(--muted);">+${xpGain} XP earned</div>`;
+  document.getElementById('check-dis-btn').classList.remove('show');
+  document.getElementById('dis-nav').style.display='flex';
+  saveS();toast(`${pts}/${tot} correct`,`+${xpGain} XP`);
+}
+function nextDissection(){
+  disIdx++;
+  disLabels={};selectedToken=null;selectedLabel=null;
+  if(disIdx>=curDay.dissections.length){
+    if(!S.progress[curDay.id])S.progress[curDay.id]={};
+    S.progress[curDay.id].dissectDone=true;
+    saveS();renderDays();
+    toast('🏆 Day '+curDay.id+' Complete!','All dissections done.');
+    goToDays();return;
+  }
+  loadDissection();
+  document.getElementById('dis-nav').style.display='none';
+}
+function speakDis(){
+  const s=document.getElementById('dis-sentence').textContent;
+  speak(s,document.getElementById('dis-audio-btn'));
+}
+
+// ═══════════════════════════════════════════════
+// SENTENCE FORGE
+// ═══════════════════════════════════════════════
+function showForge(){
+  loadForgeWord();renderForgeLog();
+  document.getElementById('forge-ta').value='';
+  document.getElementById('forge-sa').style.display='none';
+  showScreen('s-forge');
+}
+function loadForgeWord(){
+  const w=FORGE_WORDS[S.forgeWordIdx%FORGE_WORDS.length];
+  document.getElementById('fp-word').textContent=w.g;
+  document.getElementById('fp-en').textContent=w.e;
+  document.querySelector('#fp-word').insertAdjacentHTML('afterend',`<button class="aud" onclick="speak('${w.g.replace(/'/g,"\\'")}',this)" style="margin-left:8px;">🔊</button>`);
+}
+function newForgeWord(){
+  S.forgeWordIdx=(S.forgeWordIdx+1)%FORGE_WORDS.length;saveS();
+  document.getElementById('forge-ta').value='';
+  document.getElementById('forge-sa').style.display='none';
+  const old=document.querySelector('#fp-word + .aud');if(old)old.remove();
+  loadForgeWord();
+}
+function showAssess(){
+  const inp=document.getElementById('forge-ta').value.trim();
+  if(!inp){toast('Write your sentence first.');return;}
+  document.getElementById('forge-sa').style.display='block';
+}
+function logForge(result){
+  const inp=document.getElementById('forge-ta').value.trim();
+  const w=FORGE_WORDS[S.forgeWordIdx%FORGE_WORDS.length];
+  if(!inp)return;
+  S.forgeLog.unshift({sent:inp,word:w.g,result,ts:Date.now()});
+  if(S.forgeLog.length>60)S.forgeLog.pop();
+  S.forgeWordIdx=(S.forgeWordIdx+1)%FORGE_WORDS.length;
+  saveS();renderForgeLog();
+  document.getElementById('forge-ta').value='';
+  document.getElementById('forge-sa').style.display='none';
+  const old=document.querySelector('#fp-word + .aud');if(old)old.remove();
+  loadForgeWord();
+  toast({perfect:'✓ Correct',partial:'~ Mistakes noted',wrong:'✕ Logged for review'}[result],'Sentence saved.');
+}
+function renderForgeLog(){
+  const el=document.getElementById('fl-entries');
+  if(!S.forgeLog.length){el.innerHTML='<div style="font-size:0.73rem;color:var(--muted);">No sentences yet.</div>';return;}
+  el.innerHTML=S.forgeLog.slice(0,20).map(e=>`<div class="log-entry ${e.result}-l"><div class="le-sent">${e.sent} <button class="aud" onclick="speak('${e.sent.replace(/'/g,"\\'")}',this)">🔊</button></div><div class="le-word">Word: ${e.word} · ${new Date(e.ts).toLocaleDateString()}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function toast(title,body=''){
+  const old=document.querySelector('.toast.show');if(old)old.remove();
+  const t=document.getElementById('toast');
+  t.innerHTML=`<div class="t-title">${title}</div>${body?`<div class="t-body">${body}</div>`:''}`;
+  t.style.display='block';t.classList.add('show');
+  setTimeout(()=>{t.style.display='none';},4100);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadS();updateTopbar();renderDays();
+// Audio trigger words in trigger lists
+document.querySelectorAll('.tw').forEach(el=>{if(!el.onclick)el.onclick=function(){speak(this.textContent,this);};});
+</script>
+</body>
+</html>
